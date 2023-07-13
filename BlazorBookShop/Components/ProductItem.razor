@@ -1,0 +1,27 @@
+﻿
+
+<RowTemplate>
+    <MudTd DataLabel="Image">
+        <MudLink Href="@($"product/{Product.Id}")">
+			<MudAvatar Color="Color.Info" Size="Size.Large" Image="@getImgName()" />
+        </MudLink>
+    </MudTd>
+    <MudTd DataLabel="Name">
+		<MudLink Href="@($"product/{Product.Id}")">@Product.Name</MudLink>
+    </MudTd>
+    <MudTd DataLabel="Price">$@Product.Price</MudTd>
+</RowTemplate>
+
+
+@code {
+	[Parameter]
+	public Product Product { get; set; }
+
+	private string fullImgName = "/img/";
+
+	public string getImgName()
+	{
+		return "/img/" + Product.Img;
+	}
+}
+

@@ -1,0 +1,21 @@
+﻿@page "/catalog"
+@inject ICatalog Catalog
+@inject IBookShopClient BookShopClient
+@inject NavigationManager NavigationManager
+
+
+<MudText Typo="Typo.h4" Align="Align.Center" Class="ma-20">Каталог товаров</MudText>
+<MudGrid Spacing="2" Justify="Justify.Center">
+	@foreach (var product in products)
+	{
+	<MudItem>
+		<MudCard Class="mud-info">
+			<ProductItem Product="product" />
+			<MudCardActions>
+					<MudButton Variant="Variant.Text" OnClick="() => NavigateToProductPage(product.Id)">Карточка товара</MudButton>
+			</MudCardActions>
+		</MudCard>
+	</MudItem>
+	}
+</MudGrid>
+
