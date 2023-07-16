@@ -1,21 +1,56 @@
 ﻿@page "/catalog"
-@inject ICatalog Catalog
-@inject IBookShopClient BookShopClient
+@*@inject IBookShopClient ShopClient*@
 @inject NavigationManager NavigationManager
+@using BlazorBookShop.Interfaces;
 
 
 <MudText Typo="Typo.h4" Align="Align.Center" Class="ma-20">Каталог товаров</MudText>
 <MudGrid Spacing="2" Justify="Justify.Center">
-	@foreach (var product in products)
+	@if (_products is null)
+	{
+		<MudItem>
+			<MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+		<br />
+			<MudText Align="Align.Center">Страница загружается...</MudText>
+		</MudItem>
+	}
+	 else
+    {
+	@foreach (var product in _products)
 	{
 	<MudItem>
 		<MudCard Class="mud-info">
 			<ProductItem Product="product" />
+					<MudAvatar>
+						<MudImage Image="@getImgName()" Alt="@_product.Name" />
+					</MudAvatar>
 			<MudCardActions>
-					<MudButton Variant="Variant.Text" OnClick="() => NavigateToProductPage(product.Id)">Карточка товара</MudButton>
+					<MudButton Variant="Variant.Text" OnClick="() => NavigateToProductPage(product.Id)">@product.Name</MudButton>
 			</MudCardActions>
 		</MudCard>
 	</MudItem>
 	}
+	}
 </MudGrid>
 
+@code {
+	[Parameter]
+	public Guid ProductId { get; set; }
+	private Product? _product;
+
+	//CancellationTokenSource _cts = new CancellationTokenSource();
+
+	//protected override async Task OnInitializedAsync()
+	//{
+	//	await base.OnInitializedAsync();
+	//	_product = await ShopClient.GetProduct(ProductId, default);
+	//}
+
+	private string fullImgName = "/img/";
+
+	public string getImgName()
+	{
+		return fullImgName + _product.Img;
+	}
+	
+}

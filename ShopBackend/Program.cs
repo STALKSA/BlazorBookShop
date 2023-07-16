@@ -15,6 +15,8 @@ var dbPath = "myapp.db";
 builder.Services.AddDbContext<AppDbContext>(
    options => options.UseSqlite($"Data Source={dbPath}"));
 
+builder.Services.AddScoped<IProductRepository, ProductRepositoryEf>();
+
 builder.Services.AddHttpClient();
 
 builder.Services.AddCors();
@@ -51,19 +53,38 @@ app.MapPost("/update_product_by_id", UpdateProductByIdAsync);
 app.MapPost("/delete_product", DeleteProductAsync);
 app.MapPost("/delete_product_by_id", DeleteProductByIdAsync);
 
-async Task<Product[]> GetProductsAsync(AppDbContext dbContext)
+async Task<IResult> GetProductsAsync(
+	AppDbContext dbContext,
+	CancellationToken cancellationToken,
+	ILogger<Program> logger)
 {
-    return await dbContext.Products.ToArrayAsync();
+	try
+	{
+		logger.LogInformation("Запустили ендпоинт get_products");
+		await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+		logger.LogInformation("Пытаемся получить товары");
+		var products = await dbContext.Products.ToArrayAsync(cancellationToken: cancellationToken);
+		return Results.Ok(products);
+	} catch (OperationCanceledException)
+	{
+		logger.LogInformation("Операция отменена");
+		return Results.NoContent();
+	}
 }
 
-async Task<IResult> GetProductAsync([FromQuery] Guid id, AppDbContext dbContext)
+async Task<IResult> GetProductAsync(
+	[FromQuery] Guid id, 
+	AppDbContext dbContext, 
+	CancellationToken cancellationToken
+	)
 {
-	var foundProduct = await dbContext.Products.Where(p => p.Id == id).FirstOrDefaultAsync();
-	if (foundProduct == null)
+	
+	var product = await dbContext.Products.Where(p => p.Id == id).FirstOrDefaultAsync(cancellationToken);
+	if (product == null)
 	{
 		return Results.NotFound($"Товар не найден");
 	}
-	return Results.Ok(foundProduct);
+	return Results.Ok(product);
 
 }
 

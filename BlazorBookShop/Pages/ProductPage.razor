@@ -1,32 +1,47 @@
 ﻿@page "/products/{ProductId:guid}"
 @using BlazorBookShop.Interfaces;
-@inject ICatalog Catalog
+@inject IBookShopClient ShopClient
 @inject NavigationManager NavigationManager
+@implements IDisposable
 
-<MudGrid>
-    <MudItem md="12" sm="12">
-        <MudText Typo="Typo.h3">@_product.Name</MudText>
+@if (_product is null)
+{
+    <MudItem>
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        <br />
+        <MudText Align="Align.Center">Загрузка товара...</MudText>
     </MudItem>
-    <MudItem lg="4" md="6" sm="12">
-        <img width="300" src="@getImgName()" alt="@_product.Name"/>
-    </MudItem>
-    <MudItem lg="4" md="6" sm="12">
-        <MudPaper Class="pa-4">
-            <MudText Typo="Typo.h4" Class="mb-4">Цена: @String.Format("{0:0.00}", _product.Price) &#8381</MudText>
-            <MudText Typo="Typo.body1" Class="mb-4"><strong>Доступно: </strong>@_product.Stock</MudText>
-        </MudPaper>
-    </MudItem>
-</MudGrid>
+}
+else
+{
+    <MudGrid>
+        <MudItem md="12" sm="12">
+            <MudText Typo="Typo.h3">@_product.Name</MudText>
+        </MudItem>
+        <MudItem lg="4" md="6" sm="12">
+            <img width="300" src="@getImgName()" alt="@_product.Name" />
+        </MudItem>
+        <MudItem lg="4" md="6" sm="12">
+            <MudPaper Class="pa-4">
+                <MudText Typo="Typo.h4" Class="mb-4">Цена: @String.Format("{0:0.00}", _product.Price) &#8381</MudText>
+                <MudText Typo="Typo.body1" Class="mb-4"><strong>Доступно: </strong>@_product.Stock</MudText>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+}
+
 
 @code {
     [Parameter]
     public Guid ProductId { get; set; }
-    private Product _product;
+    private Product? _product;
+
+    CancellationTokenSource _cts = new CancellationTokenSource();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        _product = await Catalog.GetProductByIdAsync(ProductId);
+        _product = await ShopClient.GetProduct(ProductId, _cts.Token);
     }
 
     private string fullImgName = "/img/";
@@ -34,5 +49,9 @@
     public string getImgName()
     {
         return fullImgName + _product.Img;
+    }
+    public void Dispose()
+    {
+        _cts.Cancel();
     }
 }

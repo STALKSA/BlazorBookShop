@@ -117,7 +117,7 @@ namespace BlazorBookShop.Services
                 var product = new Product(name, price);
                 product.Id = i == 0 ? Guid.Empty : Guid.NewGuid();
                 product.Img = productImages[i].img;
-                product.Description = name;
+                //product.Description = name;
                 product.Stock = stock;
                 products.TryAdd(product.Id, product);
             }
