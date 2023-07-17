@@ -49,12 +49,12 @@ app.MapGet("/get_products", GetProductsAsync);
 app.MapGet("/get_product", GetProductAsync);
 app.MapPost("/add_product", AddProductAsync);
 app.MapPost("/update_product", UpdateProductAsync);
-app.MapPost("/update_product_by_id", UpdateProductByIdAsync);
+//app.MapPost("/update_product_by_id", UpdateProductByIdAsync);
 app.MapPost("/delete_product", DeleteProductAsync);
-app.MapPost("/delete_product_by_id", DeleteProductByIdAsync);
+//app.MapPost("/delete_product_by_id", DeleteProductByIdAsync);
 
 async Task<IResult> GetProductsAsync(
-	AppDbContext dbContext,
+	IProductRepository productRepository,
 	CancellationToken cancellationToken,
 	ILogger<Program> logger)
 {
@@ -63,7 +63,7 @@ async Task<IResult> GetProductsAsync(
 		logger.LogInformation("Запустили ендпоинт get_products");
 		await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
 		logger.LogInformation("Пытаемся получить товары");
-		var products = await dbContext.Products.ToArrayAsync(cancellationToken: cancellationToken);
+		var products = await productRepository.GetProducts(cancellationToken: cancellationToken);
 		return Results.Ok(products);
 	} catch (OperationCanceledException)
 	{
@@ -74,12 +74,12 @@ async Task<IResult> GetProductsAsync(
 
 async Task<IResult> GetProductAsync(
 	[FromQuery] Guid id, 
-	AppDbContext dbContext, 
+	IProductRepository productRepository, 
 	CancellationToken cancellationToken
 	)
 {
 	
-	var product = await dbContext.Products.Where(p => p.Id == id).FirstOrDefaultAsync(cancellationToken);
+	var product = await productRepository.GetProductById(id, cancellationToken);
 	if (product == null)
 	{
 		return Results.NotFound($"Товар не найден");
@@ -88,62 +88,68 @@ async Task<IResult> GetProductAsync(
 
 }
 
-async Task AddProductAsync(Product product, AppDbContext dbContext, HttpContext context)
+async Task<IResult> AddProductAsync(
+	Product product, 
+	IProductRepository productRepository, 
+	HttpContext context,
+	CancellationToken cancellationToken)
 {
-	await dbContext.Products.AddAsync(product);
-	await dbContext.SaveChangesAsync();
-    context.Response.StatusCode = StatusCodes.Status201Created;
+	await productRepository.Add(product, cancellationToken);
+	return Results.Ok(product);
+	
 }
 
-async Task<IResult> UpdateProductAsync(AppDbContext dbContext, Product product)
+async Task<IResult> UpdateProductAsync(
+	IProductRepository productRepository,
+	Product product,
+	CancellationToken cancellationToken)
 {
-	var foundProduct = await dbContext.Products.Where(p => p.Id == product.Id).FirstOrDefaultAsync();
-	if (foundProduct == null)
+
+	if (product == null)
 	{
-		return Results.NotFound($"Product with Id {product.Id} not found");
+		return Results.NotFound($"Продукт {product.Id} не найден");
 	}
-
-	foundProduct.Name = product.Name;
-	foundProduct.Price = product.Price;
-	await dbContext.SaveChangesAsync();
-
+	await productRepository.Update(product, cancellationToken);
 	return Results.Ok();
+
 }
 
-async Task UpdateProductByIdAsync([FromQuery] Guid id, [FromBody] Product updatedProduct, AppDbContext dbContext, HttpContext context)
+//async Task<IResult> UpdateProductByIdAsync(
+//	[FromQuery] Guid id, 
+//	[FromBody] Product updatedProduct,
+//	IProductRepository productRepository,
+//	CancellationToken cancellationToken)
+//{
+//    var updatedProduct = await productRepository.Update(id, cancellationToken);
+//	return Results.Ok();
+//    if (product != null)
+//    {
+//        product.Name = updatedProduct.Name;
+//        product.Price = updatedProduct.Price;
+//        await dbContext.SaveChangesAsync();
+//        context.Response.StatusCode = StatusCodes.Status200OK;
+//    }
+//}
+
+async Task<IResult> DeleteProductAsync(
+	IProductRepository productRepository, 
+	[FromBody] Product product,
+	CancellationToken cancellationToken)
 {
-    var product = await dbContext.Products.FindAsync(id);
-    if (product != null)
-    {
-        product.Name = updatedProduct.Name;
-        product.Price = updatedProduct.Price;
-        await dbContext.SaveChangesAsync();
-        context.Response.StatusCode = StatusCodes.Status200OK;
-    }
+	 await productRepository.Delete(product,cancellationToken);
+	return Results.Ok();	
 }
+//async Task<IResult> DeleteProductByIdAsync(AppDbContext dbContext, [FromQuery] Guid id)
+//{
+//	var deletedCount = await dbContext.Products.Where(p => p.Id == id).ExecuteDeleteAsync();
 
-async Task<IResult> DeleteProductAsync(AppDbContext dbContext, [FromBody] Product product)
-{
-	var deletedCount = await dbContext.Products.Where(p => p.Id == product.Id).ExecuteDeleteAsync();
-
-	if (deletedCount == 0)
-	{
-		return Results.NotFound($"Продукт не найден");
-	}
-	await dbContext.SaveChangesAsync();
-	return Results.Ok();
-}
-async Task<IResult> DeleteProductByIdAsync(AppDbContext dbContext, [FromQuery] Guid id)
-{
-	var deletedCount = await dbContext.Products.Where(p => p.Id == id).ExecuteDeleteAsync();
-
-	if (deletedCount == 0)
-	{
-		return Results.NotFound($"Продукт не найден");
-	}
-	await dbContext.SaveChangesAsync();
-	return Results.Ok();
-}
+//	if (deletedCount == 0)
+//	{
+//		return Results.NotFound($"Продукт не найден");
+//	}
+//	await dbContext.SaveChangesAsync();
+//	return Results.Ok();
+//}
 
 
 app.Run();

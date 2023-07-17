@@ -47,5 +47,10 @@ namespace ShopBackend.Data
 			_dbContext.Update(product);
 			return _dbContext.SaveChangesAsync(cancellationToken);
 		}
+
+		public async Task<Product[]> GetProducts(CancellationToken cancellationToken = default)
+		{
+			return await _dbContext.Products.ToArrayAsync(cancellationToken);
+		}
 	}
 }
