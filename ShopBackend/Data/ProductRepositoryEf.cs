@@ -10,7 +10,7 @@ namespace ShopBackend.Data
 			_dbContext = dbContext;
 		}
 
-		public async Task Add(Product product, CancellationToken cancellationToken)
+		public async Task AddProduct(Product product, CancellationToken cancellationToken)
 		{
 			if (product is null)
 			{
@@ -21,7 +21,7 @@ namespace ShopBackend.Data
 			await _dbContext.SaveChangesAsync(cancellationToken);
 		}
 
-		public Task Delete(Product product, CancellationToken cancellationToken)
+		public Task DeleteProduct(Product product, CancellationToken cancellationToken)
 		{
 			if (product is null)
 			{
@@ -37,7 +37,7 @@ namespace ShopBackend.Data
 			return _dbContext.Products.FirstAsync(product => product.Id == id, cancellationToken: cancellationToken);
 		}
 
-		public Task Update(Product product, CancellationToken cancellationToken)
+		public Task UpdateProduct(Product product, CancellationToken cancellationToken)
 		{
 			if (product is null)
 			{

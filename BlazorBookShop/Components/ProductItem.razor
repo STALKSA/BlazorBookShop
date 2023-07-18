@@ -1,33 +1,15 @@
-﻿﻿@using BlazorBookShop.Models;
-@*@inject NavigationManager manager*@
-
-<RowTemplate>
-    <MudTd DataLabel="Image">
-        <MudLink Href="@($"product/{Product.Id}")">
-			<MudAvatar Color="Color.Info" Size="Size.Large" Image="@getImgName()" />
-        </MudLink>
-    </MudTd>
-    <MudTd DataLabel="Name">
-		<MudLink Href="@($"product/{Product.Id}")">@Product.Name</MudLink>
-    </MudTd>
-    <MudTd DataLabel="Price">$@Product.Price</MudTd>
-</RowTemplate>
+﻿﻿
+<MudCardMedia Image="@Product.Img" Height="100" />
+<MudCardContent>
+    <MudText Typo="Typo.h5" Class="mud-info">@Product.Name</MudText>
+    <MudText Typo="Typo.body2" Class="mud-info">Цена: @Product.Price &#8381</MudText>
+    <MudText Typo="Typo.body2" Class="mud-info">Остаток: @Product.Stock</MudText>
+</MudCardContent>
 
 
 @code {
 	[Parameter]
 	public Product Product { get; set; }
 
-	private string fullImgName = "/img/";
-
-	public string getImgName()
-	{
-		return fullImgName + Product.Img;
-	}
-
-    //public void ToProductInfoPage()
-    //{
-    //    manager.NavigateTo($"/products/{Product.Id}");
-    //}
 }
 

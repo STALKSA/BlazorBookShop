@@ -46,12 +46,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapGet("/get_products", GetProductsAsync);
-app.MapGet("/get_product", GetProductAsync);
+app.MapGet("/get_product", GetProductByIdAsync);
 app.MapPost("/add_product", AddProductAsync);
 app.MapPost("/update_product", UpdateProductAsync);
-//app.MapPost("/update_product_by_id", UpdateProductByIdAsync);
+app.MapPost("/update_product_by_id", UpdateProductByIdAsync);
 app.MapPost("/delete_product", DeleteProductAsync);
-//app.MapPost("/delete_product_by_id", DeleteProductByIdAsync);
 
 async Task<IResult> GetProductsAsync(
 	IProductRepository productRepository,
@@ -60,43 +59,51 @@ async Task<IResult> GetProductsAsync(
 {
 	try
 	{
-		logger.LogInformation("Çàïóñòèëè åíäïîèíò get_products");
+		logger.LogInformation("Запускаем ендпоинт get_products");
 		await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
-		logger.LogInformation("Ïûòàåìñÿ ïîëó÷èòü òîâàðû");
+		logger.LogInformation("Пытаемся получить товары");
 		var products = await productRepository.GetProducts(cancellationToken: cancellationToken);
 		return Results.Ok(products);
-	} catch (OperationCanceledException)
+	}
+	catch (OperationCanceledException)
 	{
-		logger.LogInformation("Îïåðàöèÿ îòìåíåíà");
+		logger.LogInformation("Операция отменена");
 		return Results.NoContent();
 	}
 }
 
-async Task<IResult> GetProductAsync(
-	[FromQuery] Guid id, 
-	IProductRepository productRepository, 
+async Task<IResult> GetProductByIdAsync(
+	[FromQuery] Guid id,
+	IProductRepository productRepository,
 	CancellationToken cancellationToken
 	)
 {
-	
+
 	var product = await productRepository.GetProductById(id, cancellationToken);
 	if (product == null)
 	{
-		return Results.NotFound($"Òîâàð íå íàéäåí");
+		return Results.NotFound($"Товар не найден");
 	}
 	return Results.Ok(product);
 
 }
 
 async Task<IResult> AddProductAsync(
-	Product product, 
-	IProductRepository productRepository, 
+	Product product,
+	IProductRepository productRepository,
 	HttpContext context,
 	CancellationToken cancellationToken)
 {
-	await productRepository.Add(product, cancellationToken);
-	return Results.Ok(product);
-	
+	try
+	{
+		await productRepository.AddProduct(product, cancellationToken);
+		return Results.Created("Товар создан", product);
+	}
+	catch (Exception ex)
+	{
+		return Results.Problem(ex.ToString());
+	}
+
 }
 
 async Task<IResult> UpdateProductAsync(
@@ -104,52 +111,66 @@ async Task<IResult> UpdateProductAsync(
 	Product product,
 	CancellationToken cancellationToken)
 {
-
-	if (product == null)
+	try
 	{
-		return Results.NotFound($"Ïðîäóêò {product.Id} íå íàéäåí");
+		await productRepository.UpdateProduct(product, cancellationToken);
+		return Results.Ok();
 	}
-	await productRepository.Update(product, cancellationToken);
-	return Results.Ok();
+	catch (Exception ex)
+	{
+		return Results.NotFound();
+	}
 
 }
 
-//async Task<IResult> UpdateProductByIdAsync(
-//	[FromQuery] Guid id, 
-//	[FromBody] Product updatedProduct,
-//	IProductRepository productRepository,
-//	CancellationToken cancellationToken)
-//{
-//    var updatedProduct = await productRepository.Update(id, cancellationToken);
-//	return Results.Ok();
-//    if (product != null)
-//    {
-//        product.Name = updatedProduct.Name;
-//        product.Price = updatedProduct.Price;
-//        await dbContext.SaveChangesAsync();
-//        context.Response.StatusCode = StatusCodes.Status200OK;
-//    }
-//}
+async Task<IResult> UpdateProductByIdAsync(
+	[FromQuery] Guid id,
+	[FromBody] Product updatedProduct,
+	IProductRepository productRepository,
+	CancellationToken cancellationToken)
+{
+	if (updatedProduct == null)
+	{
+		return Results.NotFound();
+	}
+
+	try
+	{
+		var product = await productRepository.GetProductById(id, cancellationToken);
+
+		product.Name = updatedProduct.Name;
+		product.Price = updatedProduct.Price;
+		product.Img = updatedProduct.Img;
+
+		await productRepository.UpdateProduct(product, cancellationToken);
+		return Results.Ok();
+	}
+	catch (Exception ex)
+	{
+		return Results.NotFound();
+	}
+
+}
 
 async Task<IResult> DeleteProductAsync(
-	IProductRepository productRepository, 
+	IProductRepository productRepository,
 	[FromBody] Product product,
 	CancellationToken cancellationToken)
 {
-	 await productRepository.Delete(product,cancellationToken);
-	return Results.Ok();	
-}
-//async Task<IResult> DeleteProductByIdAsync(AppDbContext dbContext, [FromQuery] Guid id)
-//{
-//	var deletedCount = await dbContext.Products.Where(p => p.Id == id).ExecuteDeleteAsync();
+	try
+	{
+		await productRepository.DeleteProduct(product, cancellationToken);
+		return Results.Ok();
+	}
+	catch (Exception ex)
+	{
+		return Results.NotFound();
+	}
 
-//	if (deletedCount == 0)
-//	{
-//		return Results.NotFound($"Ïðîäóêò íå íàéäåí");
-//	}
-//	await dbContext.SaveChangesAsync();
-//	return Results.Ok();
-//} 
+
+}
+
+
 
 
 app.Run();
