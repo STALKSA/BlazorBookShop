@@ -60,14 +60,14 @@ async Task<IResult> GetProductsAsync(
 {
 	try
 	{
-		logger.LogInformation("Запустили ендпоинт get_products");
+		logger.LogInformation("Г‡Г ГЇГіГ±ГІГЁГ«ГЁ ГҐГ­Г¤ГЇГ®ГЁГ­ГІ get_products");
 		await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
-		logger.LogInformation("Пытаемся получить товары");
+		logger.LogInformation("ГЏГ»ГІГ ГҐГ¬Г±Гї ГЇГ®Г«ГіГ·ГЁГІГј ГІГ®ГўГ Г°Г»");
 		var products = await productRepository.GetProducts(cancellationToken: cancellationToken);
 		return Results.Ok(products);
 	} catch (OperationCanceledException)
 	{
-		logger.LogInformation("Операция отменена");
+		logger.LogInformation("ГЋГЇГҐГ°Г Г¶ГЁГї Г®ГІГ¬ГҐГ­ГҐГ­Г ");
 		return Results.NoContent();
 	}
 }
@@ -82,7 +82,7 @@ async Task<IResult> GetProductAsync(
 	var product = await productRepository.GetProductById(id, cancellationToken);
 	if (product == null)
 	{
-		return Results.NotFound($"Товар не найден");
+		return Results.NotFound($"Г’Г®ГўГ Г° Г­ГҐ Г­Г Г©Г¤ГҐГ­");
 	}
 	return Results.Ok(product);
 
@@ -107,7 +107,7 @@ async Task<IResult> UpdateProductAsync(
 
 	if (product == null)
 	{
-		return Results.NotFound($"Продукт {product.Id} не найден");
+		return Results.NotFound($"ГЏГ°Г®Г¤ГіГЄГІ {product.Id} Г­ГҐ Г­Г Г©Г¤ГҐГ­");
 	}
 	await productRepository.Update(product, cancellationToken);
 	return Results.Ok();
@@ -145,11 +145,11 @@ async Task<IResult> DeleteProductAsync(
 
 //	if (deletedCount == 0)
 //	{
-//		return Results.NotFound($"Продукт не найден");
+//		return Results.NotFound($"ГЏГ°Г®Г¤ГіГЄГІ Г­ГҐ Г­Г Г©Г¤ГҐГ­");
 //	}
 //	await dbContext.SaveChangesAsync();
 //	return Results.Ok();
-//}
+//} 
 
 
 app.Run();
