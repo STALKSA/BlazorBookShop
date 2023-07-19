@@ -20,7 +20,7 @@ else
             <MudText Typo="Typo.h3">@_product.Name</MudText>
         </MudItem>
         <MudItem lg="4" md="6" sm="12">
-            <img width="300" src="@getImgName()" alt="@_product.Name" />
+            <img width="300" src="@_product.Img" alt="@_product.Name" />
         </MudItem>
         <MudItem lg="4" md="6" sm="12">
             <MudPaper Class="pa-4">
@@ -45,12 +45,12 @@ else
         _product = await ShopClient.GetProduct(ProductId, _cts.Token);
     }
 
-    private string fullImgName = "/img/";
+    //private string fullImgName = "/img/";
 
-    public string getImgName()
-    {
-        return fullImgName + _product.Img;
-    }
+    //public string getImgName()
+    //{
+    //    return fullImgName + _product.Img;
+    //}
     public void Dispose()
     {
         _cts.Cancel();

@@ -1,7 +1,7 @@
 ﻿@page "/catalog"
+@using BlazorBookShop.Components
 @inject IBookShopClient ShopClient
 @inject NavigationManager maneger
-@using BlazorBookShop.Interfaces;
 
 
 <MudText Typo="Typo.h4" Align="Align.Center" Class="ma-20">Каталог товаров</MudText>
@@ -18,15 +18,16 @@
     {
 	@foreach (var product in _products)
 	{
+	
 
 	<MudItem>
 		<MudCard Class="mud-info">
 			<ProductItem Product="product" />
-					<MudCardMedia Height="200">@product.Img</MudCardMedia>
+				@*	<MudCardMedia Height="200">@product.Img</MudCardMedia>
 					<MudCardContent>
 						<MudText Typo="Typo.h5">@product.Name</MudText>
-					</MudCardContent>
-					<MudCardActions Style="display: flex; justify-content: center;">
+					</MudCardContent>*@
+					<MudCardActions>
 						<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error">Удалить</MudButton>
 						<MudButton OnClick="() => NavigateToProductPage(product.Id)" Variant="Variant.Filled" Color="Color.Primary">Подробнее</MudButton>
 					</MudCardActions>

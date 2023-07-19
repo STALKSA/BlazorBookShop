@@ -1,15 +1,17 @@
 ﻿﻿
-<MudCardMedia Image="@Product.Img" Height="100" />
+
+<MudCard style="width: 300px">
+<MudCardMedia Image="@Product.Img" Height="400" />
 <MudCardContent>
     <MudText Typo="Typo.h5" Class="mud-info">@Product.Name</MudText>
-    <MudText Typo="Typo.body2" Class="mud-info">Цена: @Product.Price &#8381</MudText>
-    <MudText Typo="Typo.body2" Class="mud-info">Остаток: @Product.Stock</MudText>
+    <MudText Typo="Typo.body2" Class="mud-info">Цена: @Product.Price</MudText>
 </MudCardContent>
+</MudCard>
 
 
 @code {
 	[Parameter]
-	public Product Product { get; set; }
+    public Product Product { get; set; } = null!;
 
 }
 
