@@ -118,7 +118,7 @@ async Task<IResult> UpdateProductAsync(
 	}
 	catch (Exception ex)
 	{
-		return Results.NotFound();
+		return Results.NotFound($"Товар не найден");
 	}
 
 }
@@ -129,11 +129,7 @@ async Task<IResult> UpdateProductByIdAsync(
 	IProductRepository productRepository,
 	CancellationToken cancellationToken)
 {
-	if (updatedProduct == null)
-	{
-		return Results.NotFound();
-	}
-
+	
 	try
 	{
 		var product = await productRepository.GetProductById(id, cancellationToken);
@@ -147,7 +143,7 @@ async Task<IResult> UpdateProductByIdAsync(
 	}
 	catch (Exception ex)
 	{
-		return Results.NotFound();
+		return Results.NotFound($"Товар не найден");
 	}
 
 }
@@ -164,13 +160,11 @@ async Task<IResult> DeleteProductAsync(
 	}
 	catch (Exception ex)
 	{
-		return Results.NotFound();
+		return Results.NotFound($"Товар не найден");
 	}
 
 
 }
-
-
 
 
 app.Run();
