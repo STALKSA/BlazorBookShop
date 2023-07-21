@@ -4,7 +4,9 @@
 @inject NavigationManager maneger
 
 
-<MudText Typo="Typo.h4" Align="Align.Center" Class="ma-20">Каталог товаров</MudText>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mud-spacing-around">Добавить товар</MudButton>
+
+<MudText Typo="Typo.h4" Align="Align.Center" Class="ma-20 mb-4 " Style="color:blueviolet">Каталог товаров</MudText>
 <MudGrid Spacing="2" Justify="Justify.Center">
 	@if (_products is null)
 	{
@@ -21,15 +23,13 @@
 	
 
 	<MudItem>
-		<MudCard Class="mud-info">
-			<ProductItem Product="product" />
-				@*	<MudCardMedia Height="200">@product.Img</MudCardMedia>
-					<MudCardContent>
-						<MudText Typo="Typo.h5">@product.Name</MudText>
-					</MudCardContent>*@
-					<MudCardActions>
-						<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error">Удалить</MudButton>
-						<MudButton OnClick="() => NavigateToProductPage(product.Id)" Variant="Variant.Filled" Color="Color.Primary">Подробнее</MudButton>
+				<MudCard Class="shadow-sm bg-light">
+			<ProductItem Product="product"  />
+					<MudCardActions Class="d-flex justify-content-center">
+						<MudGrid Spacing="2" Justify="Justify.Center">
+						<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Class="mt-3 mb-2 btn-custom">Удалить</MudButton>
+						<MudButton OnClick="() => NavigateToProductPage(product.Id)" Variant="Variant.Filled" Color="Color.Primary" Class="mt-3 ml-3 mb-2">Подробнее</MudButton>
+						</MudGrid>
 					</MudCardActions>
 		</MudCard>
 	</MudItem>

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopBackend.Data;
+using ShopBackend.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(
    options => options.UseSqlite($"Data Source={dbPath}"));
 
 builder.Services.AddScoped<IProductRepository, ProductRepositoryEf>();
+builder.Services.AddScoped<IAccountRepository, AccountRepositoryEf>();
 
 builder.Services.AddHttpClient();
 
