@@ -47,5 +47,14 @@ namespace ShopBackend.Data.Repositories
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-    }
+		public virtual async Task Delete(TEntity entity, CancellationToken cancellationToken)
+		{
+			if (entity is null)
+				throw new ArgumentNullException(nameof(entity));
+
+			Entities.Remove(entity);
+			await _dbContext.SaveChangesAsync(cancellationToken);
+		}
+
+	}
 }

@@ -3,19 +3,24 @@
 
 namespace BlazorBookShop.Pages
 {
-	public partial class CatalogPage : IDisposable
+	public partial class CatalogPage
 	{
 		private Product[]? _products;
 		private CancellationTokenSource _cts = new();
 
 		protected override async Task OnInitializedAsync()
 		{
-			_products = await ShopClient.GetProducts(_cts.Token);
-			
+			await GetProducts();
 		}
+
 		void NavigateToProductPage(Guid id)
 		{
 			maneger.NavigateTo($"/products/{id.ToString()}");
+		}
+
+		private async Task GetProducts()
+		{
+			_products = await ShopClient.GetProducts(_cts.Token);
 		}
 
 		public void Dispose()

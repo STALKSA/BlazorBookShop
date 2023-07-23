@@ -54,7 +54,7 @@ namespace BlazorBookShop.Services
 
         }
 
-        public async Task AddProduct(Product product, CancellationToken cancellationToken)
+        public async Task AddProduct(Product? product, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(product);
             using var response = await _httpClient.PostAsJsonAsync("add_product", product, cancellationToken);
@@ -68,7 +68,7 @@ namespace BlazorBookShop.Services
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task DeleteProduct(Product product, CancellationToken cancellationToken)
+        public async Task DeleteProduct(Product? product, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(product);
             using var response = await _httpClient.PostAsJsonAsync("delete_product", product, cancellationToken);

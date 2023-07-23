@@ -1,6 +1,6 @@
 ﻿namespace ShopBackend.Data
 {
-	public class Product
+	public class Product: IEntity
 	{
         public Product(string name, decimal price)
         {
