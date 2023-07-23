@@ -1,6 +1,8 @@
 ﻿using BlazorBookShop.Interfaces;
 using BlazorBookShop.Models;
+using BookShop.HttpApiClient.Models;
 using System;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace BlazorBookShop.Services
@@ -75,5 +77,12 @@ namespace BlazorBookShop.Services
             response.EnsureSuccessStatusCode();
         }
 
+        public async Task Register(Account account, CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(account);
+            using var response = await _httpClient.PostAsJsonAsync("account/register", account, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+        }
     }
 }
