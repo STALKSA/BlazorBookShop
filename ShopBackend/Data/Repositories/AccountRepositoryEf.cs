@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnlineShop.Domain.Entities;
+using OnlineShop.Domain.Interfaces;
 
 namespace ShopBackend.Data.Repositories
 {
@@ -17,5 +19,17 @@ namespace ShopBackend.Data.Repositories
 
             return Entities.SingleAsync(x => x.Email == email, cancellationToken: cancellationToken);
         }
+
+        public Task<Account?> FindAccountByEmail(string email, CancellationToken cancellationToken)
+        {
+            if(email is null)
+            {
+                throw new ArgumentNullException(nameof(email));
+            }
+
+            return Entities.SingleOrDefaultAsync(x => x.Email == email, cancellationToken);
+        }
+
+
     }
 }

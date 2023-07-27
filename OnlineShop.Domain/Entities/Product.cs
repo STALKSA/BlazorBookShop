@@ -1,4 +1,4 @@
-﻿namespace ShopBackend.Data
+﻿namespace OnlineShop.Domain.Entities
 {
 	public class Product: IEntity
 	{

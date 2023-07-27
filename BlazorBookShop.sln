@@ -8,6 +8,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopBackend", "ShopBackend\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookShop.HttpApiClient", "BookShop.HttpApiClient\BookShop.HttpApiClient.csproj", "{0B14FD08-EA7C-4E04-9873-4432A99AC2CF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineShop.HttpModals", "OnlineShop.HttpModals\OnlineShop.HttpModals.csproj", "{C52DC356-AE85-4622-B3ED-F8C8215C4036}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineShop.Domain", "OnlineShop.Domain\OnlineShop.Domain.csproj", "{FD828226-1E22-4188-BF31-FF8E4F901651}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +30,14 @@ Global
 		{0B14FD08-EA7C-4E04-9873-4432A99AC2CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B14FD08-EA7C-4E04-9873-4432A99AC2CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B14FD08-EA7C-4E04-9873-4432A99AC2CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C52DC356-AE85-4622-B3ED-F8C8215C4036}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C52DC356-AE85-4622-B3ED-F8C8215C4036}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C52DC356-AE85-4622-B3ED-F8C8215C4036}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C52DC356-AE85-4622-B3ED-F8C8215C4036}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD828226-1E22-4188-BF31-FF8E4F901651}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD828226-1E22-4188-BF31-FF8E4F901651}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD828226-1E22-4188-BF31-FF8E4F901651}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD828226-1E22-4188-BF31-FF8E4F901651}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

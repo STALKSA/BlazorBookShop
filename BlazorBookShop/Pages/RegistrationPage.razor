@@ -1,6 +1,7 @@
 ﻿@page "/registration"
 @using System.ComponentModel.DataAnnotations
-@using BookShop.HttpApiClient.Models;
+@using OnlineShop.HttpModals.Requests;
+@*@using BookShop.HttpApiClient.Models;*@
 @inject IBookShopClient ShopClient
 @inject NavigationManager maneger
 
@@ -47,7 +48,7 @@
     RegisterAccountForm model = new RegisterAccountForm();
     bool success;
 
-    public class RegisterAccountForm
+    private class RegisterAccountForm
     {
         [Required]
         [StringLength(20, ErrorMessage = "Имя должно быть не короче 3 символов", MinimumLength = 3)]
@@ -69,7 +70,7 @@
 
     private async Task ProcessRegistration(EditContext context)
     {
-        await ShopClient.Register(new Account()
+        await ShopClient.Register(new RegisterRequest()
         {
           Name = model.Name, Email = model.Email, Password = model.Password
         }, default);

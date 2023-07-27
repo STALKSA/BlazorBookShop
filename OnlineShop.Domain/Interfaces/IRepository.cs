@@ -1,4 +1,4 @@
-﻿namespace ShopBackend.Data.Repositories
+﻿namespace OnlineShop.Domain.Interfaces
 {
     public interface IRepository<TEntity>
         where TEntity : class

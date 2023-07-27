@@ -1,5 +1,6 @@
 ﻿using BlazorBookShop.Models;
-using BookShop.HttpApiClient.Models;
+//using BookShop.HttpApiClient.Models;
+using OnlineShop.HttpModals.Requests;
 
 namespace BlazorBookShop.Interfaces
 {
@@ -11,7 +12,7 @@ namespace BlazorBookShop.Interfaces
 		Task UpdateProduct(Guid id, Product product, CancellationToken cancellationToken);
 		Task DeleteProduct(Product product, CancellationToken cancellationToken);
 
-		Task Register(Account account, CancellationToken cancellationToken);
+		Task Register(RegisterRequest account, CancellationToken cancellationToken);
 
 	}
 }

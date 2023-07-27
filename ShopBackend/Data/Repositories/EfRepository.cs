@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnlineShop.Domain.Entities;
+using OnlineShop.Domain.Interfaces;
 
 namespace ShopBackend.Data.Repositories
 {
