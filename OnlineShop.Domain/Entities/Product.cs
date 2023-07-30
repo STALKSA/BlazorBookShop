@@ -18,7 +18,7 @@
             Price = price;
         }
 
-        public Guid Id { get; init; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string? Img { get; set; } = "";
         public decimal Price { get; set; } = 0;

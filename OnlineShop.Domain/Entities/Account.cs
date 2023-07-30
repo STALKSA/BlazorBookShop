@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
@@ -6,10 +7,14 @@ namespace OnlineShop.Domain.Entities
 {
     public class Account : IEntity
     {
-        
-        private string _name;
-        private string _email;
-        private string _hashedPassword;
+        private Guid _id;
+        private string? _name;
+        private string? _email;
+        private string? _hashedPassword;
+
+        public Account()
+        {
+        }
 
         public Account(Guid id, string name, string email, string hashedPassword)
         {
@@ -40,9 +45,13 @@ namespace OnlineShop.Domain.Entities
               
         }
 
-        public Guid Id { get; init; }
+        public Guid Id
+        {
+            get => _id;
+            set => _id = value;
+        }
 
-        public string Name 
+        public string? Name 
         {
             get => _name;
             set
@@ -53,7 +62,7 @@ namespace OnlineShop.Domain.Entities
             }
                 
         }
-        public string Email
+        public string? Email
         { 
             get => _email;
 
@@ -71,38 +80,32 @@ namespace OnlineShop.Domain.Entities
                 _email = value;
             }
         }
-        public string Password
+        public string? Password
         { 
             get => _hashedPassword;
 
             set
             {
-                if(IsValidPassword(value))
-                {
-                    _hashedPassword = value;
-
-                }
-                else
-                {
-                    throw new ArgumentException("Не валидный пароль");
-                }
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Не валидное значение емейла" + nameof(value));
+                _hashedPassword = value;
             }
         }
 
-        private bool IsValidPassword(string password)
-        {
-            if(string.IsNullOrWhiteSpace(password) || password.Length < 8)
-            { 
-                return false;
-            }
+        //private bool IsValidPassword(string password)
+        //{
+        //    if(string.IsNullOrWhiteSpace(password) || password.Length < 8)
+        //    { 
+        //        return false;
+        //    }
 
-            string pattern = @"^(?=.*[a-z])(?=.*[A-Z]).{8,}$";
+        //    string pattern = @"^(?=.*[a-z])(?=.*[A-Z]).{8,}$";
 
-            if(!Regex.IsMatch(password, pattern))
-            {
-                return false;
-            }
-            return true;
-        }
+        //    if(!Regex.IsMatch(password, pattern))
+        //    {
+        //        return false;
+        //    }
+        //    return true;
+        //}
     }
 }

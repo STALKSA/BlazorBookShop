@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OnlineShop.Domain.Entities;
+using OnlineShop.Domain.Interfaces;
 using ShopBackend.Data;
 using ShopBackend.Data.Repositories;
 
