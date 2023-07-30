@@ -2,7 +2,7 @@
 using OnlineShop.Domain.Entities;
 using OnlineShop.Domain.Interfaces;
 
-namespace ShopBackend.Data.Repositories
+namespace OnlineShop.WebApi.Data.Repositories
 {
     public class ProductRepositoryEf : IProductRepository
     {

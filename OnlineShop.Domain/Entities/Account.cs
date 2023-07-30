@@ -1,7 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
 
 namespace OnlineShop.Domain.Entities
 {
@@ -16,7 +13,7 @@ namespace OnlineShop.Domain.Entities
         {
         }
 
-        public Account(Guid id, string name, string email, string hashedPassword)
+        public Account(string name, string email, string hashedPassword)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -38,7 +35,7 @@ namespace OnlineShop.Domain.Entities
                 throw new ArgumentException("Значение не валидно",nameof(email));
             }
 
-            Id = id;
+            Id = Guid.NewGuid();
             _name = name;
             _email = email;
             _hashedPassword = hashedPassword;
@@ -75,7 +72,7 @@ namespace OnlineShop.Domain.Entities
                     
                 if(!new EmailAddressAttribute().IsValid(value))
                 {
-                    throw new ArgumentException("Не валидное значение емейла", nameof(value));
+                    throw new ArgumentException("Не валидное значение Email", nameof(value));
                 }
                 _email = value;
             }
@@ -87,7 +84,7 @@ namespace OnlineShop.Domain.Entities
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Не валидное значение емейла" + nameof(value));
+                    throw new ArgumentException("Не валидное значение Email" + nameof(value));
                 _hashedPassword = value;
             }
         }

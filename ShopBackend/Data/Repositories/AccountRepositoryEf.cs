@@ -2,12 +2,12 @@
 using OnlineShop.Domain.Entities;
 using OnlineShop.Domain.Interfaces;
 
-namespace ShopBackend.Data.Repositories
+namespace OnlineShop.WebApi.Data.Repositories
 {
     public class AccountRepositoryEf : EfRepository<Account>, IAccountRepository
     {
         public AccountRepositoryEf(AppDbContext dbContext) : base(dbContext)
-        {        
+        {
         }
 
         public Task<Account> GetAccountByEmail(string email, CancellationToken cancellationToken)
@@ -22,7 +22,7 @@ namespace ShopBackend.Data.Repositories
 
         public Task<Account?> FindAccountByEmail(string email, CancellationToken cancellationToken)
         {
-            if(email is null)
+            if (email is null)
             {
                 throw new ArgumentNullException(nameof(email));
             }

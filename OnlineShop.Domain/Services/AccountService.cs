@@ -1,5 +1,6 @@
 ﻿
 
+using OnlineShop.Domain.Exceptions;
 using OnlineShop.Domain.Entities;
 using OnlineShop.Domain.Interfaces;
 
@@ -25,10 +26,10 @@ namespace OnlineShop.Domain.Services
             var existedAccount = await _accountRepository.FindAccountByEmail(email, cancellationToken);
             if (existedAccount is not null)
             {
-                throw new InvalidOperationException("Аккаунт с данным эмейлом уже существует");
+                throw new EmailAlreadyExistsException("Аккаунт с данным Email'ом уже существует");
                
             }
-            var account = new Account(Guid.Empty, name, email, EncryptPassword(password));
+            var account = new Account(name, email, EncryptPassword(password));
             await _accountRepository.Add(account, cancellationToken);
 
         }

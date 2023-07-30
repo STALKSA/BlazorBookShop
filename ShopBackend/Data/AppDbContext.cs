@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnlineShop.Domain.Entities;
-using ShopBackend.Data;
 
 public class AppDbContext : DbContext
 {

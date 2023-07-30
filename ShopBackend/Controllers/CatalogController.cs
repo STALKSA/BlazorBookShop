@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Domain.Entities;
 using OnlineShop.Domain.Interfaces;
-using ShopBackend.Data;
-using ShopBackend.Data.Repositories;
 
-namespace ShopBackend.Controllers
+namespace OnlineShop.WebApi.Controllers
 {
-	[ApiController]
+    [ApiController]
 	public class CatalogController : Controller
 	{
 		private readonly IRepository<Product> _repository;

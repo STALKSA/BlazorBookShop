@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using OnlineShop.Domain.Interfaces;
 using OnlineShop.Domain.Services;
-using ShopBackend.Data.Repositories;
+using OnlineShop.WebApi.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

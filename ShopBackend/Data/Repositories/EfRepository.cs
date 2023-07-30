@@ -2,7 +2,7 @@
 using OnlineShop.Domain.Entities;
 using OnlineShop.Domain.Interfaces;
 
-namespace ShopBackend.Data.Repositories
+namespace OnlineShop.WebApi.Data.Repositories
 {
     public class EfRepository<TEntity> : IRepository<TEntity>
         where TEntity : class, IEntity
@@ -49,14 +49,14 @@ namespace ShopBackend.Data.Repositories
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-		public virtual async Task Delete(TEntity entity, CancellationToken cancellationToken)
-		{
-			if (entity is null)
-				throw new ArgumentNullException(nameof(entity));
+        public virtual async Task Delete(TEntity entity, CancellationToken cancellationToken)
+        {
+            if (entity is null)
+                throw new ArgumentNullException(nameof(entity));
 
-			Entities.Remove(entity);
-			await _dbContext.SaveChangesAsync(cancellationToken);
-		}
+            Entities.Remove(entity);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
 
-	}
+    }
 }
