@@ -4,7 +4,7 @@ VisualStudioVersion = 17.0.31717.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorBookShop", "BlazorBookShop\BlazorBookShop.csproj", "{E34A201F-F71F-4820-AC0B-1E62A0FDD330}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineShop.WebApi", "ShopBackend\OnlineShop.WebApi.csproj", "{B61B4321-F748-46D0-A666-B43DB99A2F0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineShop.WebApi", "OnlineShop.WebApi\OnlineShop.WebApi.csproj", "{B61B4321-F748-46D0-A666-B43DB99A2F0A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookShop.HttpApiClient", "BookShop.HttpApiClient\BookShop.HttpApiClient.csproj", "{0B14FD08-EA7C-4E04-9873-4432A99AC2CF}"
 EndProject
