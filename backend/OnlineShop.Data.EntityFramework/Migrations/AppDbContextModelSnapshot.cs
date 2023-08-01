@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ShopBackend.Migrations
+namespace OnlineShop.Data.EntityFramework.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -14,15 +14,18 @@ namespace ShopBackend.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.8");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.9");
 
-            modelBuilder.Entity("ShopBackend.Data.Account", b =>
+            modelBuilder.Entity("OnlineShop.Domain.Entities.Account", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HashedPassword")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -33,7 +36,7 @@ namespace ShopBackend.Migrations
                     b.ToTable("Accounts");
                 });
 
-            modelBuilder.Entity("ShopBackend.Data.Product", b =>
+            modelBuilder.Entity("OnlineShop.Domain.Entities.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

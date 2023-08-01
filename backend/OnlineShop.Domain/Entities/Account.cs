@@ -77,7 +77,7 @@ namespace OnlineShop.Domain.Entities
                 _email = value;
             }
         }
-        public string? Password
+        public string? HashedPassword
         { 
             get => _hashedPassword;
 
@@ -89,20 +89,5 @@ namespace OnlineShop.Domain.Entities
             }
         }
 
-        //private bool IsValidPassword(string password)
-        //{
-        //    if(string.IsNullOrWhiteSpace(password) || password.Length < 8)
-        //    { 
-        //        return false;
-        //    }
-
-        //    string pattern = @"^(?=.*[a-z])(?=.*[A-Z]).{8,}$";
-
-        //    if(!Regex.IsMatch(password, pattern))
-        //    {
-        //        return false;
-        //    }
-        //    return true;
-        //}
     }
 }

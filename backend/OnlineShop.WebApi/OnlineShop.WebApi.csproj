@@ -17,8 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OnlineShop.Data.EntityFramework\OnlineShop.Data.EntityFramework.csproj" />
     <ProjectReference Include="..\OnlineShop.Domain\OnlineShop.Domain.csproj" />
-    <ProjectReference Include="..\OnlineShop.HttpModals\OnlineShop.HttpModals.csproj" />
+    <ProjectReference Include="..\..\shared\OnlineShop.HttpModals\OnlineShop.HttpModals.csproj" />
   </ItemGroup>
 
 </Project>

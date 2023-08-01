@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OnlineShop.HttpModals\OnlineShop.HttpModals.csproj" />
+    <ProjectReference Include="..\..\shared\OnlineShop.HttpModals\OnlineShop.HttpModals.csproj" />
   </ItemGroup>
 
 </Project>
