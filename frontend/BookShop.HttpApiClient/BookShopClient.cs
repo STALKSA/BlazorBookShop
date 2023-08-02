@@ -1,8 +1,12 @@
 ﻿using BlazorBookShop.Interfaces;
 using BlazorBookShop.Models;
+using BookShop.HttpApiClient;
+using BookShop.HttpApiClient.Exceptions;
 //using BookShop.HttpApiClient.Models;
 using OnlineShop.HttpModals.Requests;
+using OnlineShop.HttpModals.Responses;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -82,6 +86,24 @@ namespace BlazorBookShop.Services
         {
             ArgumentNullException.ThrowIfNull(request);
             using var response = await _httpClient.PostAsJsonAsync("account/register", request, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+
+                if(response.StatusCode == HttpStatusCode.Conflict)
+                {
+                    var error = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new MyBookShopApiException(error!);
+                } 
+                else if(response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var details = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+                    throw new MyBookShopApiException(response.StatusCode, details!);
+                }
+                else
+                {
+                    throw new MyBookShopApiException("Неизвестная ошибка");
+                }
+            }
             response.EnsureSuccessStatusCode();
 
         }

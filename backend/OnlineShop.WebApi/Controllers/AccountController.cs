@@ -2,6 +2,7 @@
 using OnlineShop.Domain.Exceptions;
 using OnlineShop.Domain.Services;
 using OnlineShop.HttpModals.Requests;
+using OnlineShop.HttpModals.Responses;
 
 namespace OnlineShop.WebApi.Controllers
 {
@@ -30,11 +31,11 @@ namespace OnlineShop.WebApi.Controllers
             }
             catch(EmailAlreadyExistsException ex)
             {
-                return Conflict("Пользователь с таким Email'ом уже зарегистрирован.");
+                return Conflict(new ErrorResponse("Пользователь с таким Email'ом уже зарегистрирован."));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.ToString());
+                return BadRequest("Argument null exception caught:\n" + ex.Message);
             }
           
         }

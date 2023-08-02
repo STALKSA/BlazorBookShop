@@ -1,82 +1,83 @@
 ﻿@page "/registration"
 @using System.ComponentModel.DataAnnotations
+@using BookShop.HttpApiClient.Exceptions;
 @using OnlineShop.HttpModals.Requests;
 @*@using BookShop.HttpApiClient.Models;*@
 @inject IBookShopClient ShopClient
 @inject NavigationManager maneger
+@inject IDialogService DialogService
+@inject ILogger<RegistrationPage> Logger
+@inject ISnackbar Snackbar
 
 
 <h3>Регистрация</h3>
 
 
-<EditForm Model="@model" OnSubmit="@ProcessRegistration">
+<EditForm Model="@model" OnValidSubmit="@ProcessRegistration">
     <DataAnnotationsValidator />
     <MudGrid>
         <MudItem xs="12" sm="7">
             <MudCard>
                 <MudCardContent>
-                    <MudTextField Label="Имя Фамилия" HelperText="Max. 8 characters"
+                    <MudTextField Label="Имя"
                                   @bind-Value="model.Name" For="@(() => model.Name)" />
                     <MudTextField Label="Email" Class="mt-3"
                                   @bind-Value="model.Email" For="@(() => model.Email)" />
-                    <MudTextField Label="Пароль" HelperText="Choose a strong password" Class="mt-3"
+                    <MudTextField Label="Пароль" Class="mt-3"
                                   @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password" />
-                    <MudTextField Label="Повторите пароль" HelperText="Repeat the password" Class="mt-3"
-                                  @bind-Value="model.Password2" For="@(() => model.Password2)" InputType="InputType.Password" />
+                    <MudTextField Label="Повторите пароль" Class="mt-3"
+                                  @bind-Value="model.ConfirmedPassword" For="@(() => model.ConfirmedPassword)" InputType="InputType.Password" />
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Зарегистрироваться</MudButton>
                 </MudCardActions>
             </MudCard>
         </MudItem>
+         @if(_registrationInProgress)
+            {
         <MudItem xs="12" sm="5">
-            <MudPaper Class="pa-4 mud-height-full">
-             
-                @if (success)
-                {
-                    <MudText Color="Color.Success">Success</MudText>
-                }
-                else
-                {
-                    <ValidationSummary/>
-                }
-            </MudPaper>
+
+                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7"/>
         </MudItem>
+            }
     </MudGrid>
 </EditForm>
+
 @code {
-    RegisterAccountForm model = new RegisterAccountForm();
-    bool success;
-
-    private class RegisterAccountForm
-    {
-        [Required]
-        [StringLength(20, ErrorMessage = "Имя должно быть не короче 3 символов", MinimumLength = 3)]
-        public string Name { get; set; }
-
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        [StringLength(30, ErrorMessage = "Пароль должен содердать как минимум 8 символов", MinimumLength = 8)]
-        public string Password { get; set; }
-
-        [Required]
-        [Compare(nameof(Password))]
-        public string Password2 { get; set; }
-
-    }
+    readonly RegisterRequest model = new();
+    private bool _registrationInProgress;
 
     private async Task ProcessRegistration(EditContext context)
     {
-        await ShopClient.Register(new RegisterRequest()
+        if(_registrationInProgress)
         {
-          Name = model.Name, Email = model.Email, Password = model.Password
-        }, default);
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add("Пожалуйста, подождите...", Severity.Info);
+            return;
+        }
+        _registrationInProgress = true;
+        Logger.LogInformation("Попытка регистрации");
 
-        success = true;
-        StateHasChanged();
+        try
+        {
+            await ShopClient.Register(model, default);
+            await DialogService.ShowMessageBox(
+                "Оповещение для нового пользователя",
+                "Поздравляем!Вы успешно зарегистрировались",
+                "OK"
+            );
+            maneger.NavigateTo("/catalog");
+        }
+        catch (MyBookShopApiException ex)
+        {
+            _registrationInProgress = false;
+            await DialogService.ShowMessageBox("Ошибка!", ex.Message, "OK");
+        }
+        finally
+        {
+            _registrationInProgress = false;
+        }
+
     }
 
 }
