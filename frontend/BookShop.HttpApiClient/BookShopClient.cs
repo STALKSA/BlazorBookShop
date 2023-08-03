@@ -1,6 +1,4 @@
-﻿using BlazorBookShop.Interfaces;
-using BlazorBookShop.Models;
-using BookShop.HttpApiClient;
+﻿using BlazorBookShop.Models;
 using BookShop.HttpApiClient.Exceptions;
 //using BookShop.HttpApiClient.Models;
 using OnlineShop.HttpModals.Requests;
@@ -10,20 +8,20 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace BlazorBookShop.Services
+namespace BookShop.HttpApiClient
 {
     public class BookShopClient : IDisposable, IBookShopClient
     {
         private readonly string _host;
         private readonly HttpClient _httpClient;
-		private bool _httpClientInjected = false;
+        private bool _httpClientInjected = false;
 
-		public BookShopClient(string host = "https://bookshop.com/", HttpClient? httpClient = null)
+        public BookShopClient(string host = "https://bookshop.com/", HttpClient? httpClient = null)
         {
-			if (string.IsNullOrEmpty(host))
-				throw new ArgumentNullException(nameof(host));
+            if (string.IsNullOrEmpty(host))
+                throw new ArgumentNullException(nameof(host));
 
-          
+
             var hostUri = new Uri(host, UriKind.Absolute);
 
             _host = host;
@@ -51,8 +49,8 @@ namespace BlazorBookShop.Services
 
         public async Task<Product> GetProduct(Guid id, CancellationToken cancellationToken)
         {
-			ArgumentNullException.ThrowIfNull(id);
-			var product = await _httpClient.GetFromJsonAsync<Product>($"get_product?id={id}", cancellationToken);
+            ArgumentNullException.ThrowIfNull(id);
+            var product = await _httpClient.GetFromJsonAsync<Product>($"get_product?id={id}", cancellationToken);
             if (product is null)
             {
                 throw new InvalidOperationException("Сервер вернул продукт со значением null");
@@ -89,14 +87,14 @@ namespace BlazorBookShop.Services
             if (!response.IsSuccessStatusCode)
             {
 
-                if(response.StatusCode == HttpStatusCode.Conflict)
+                if (response.StatusCode == HttpStatusCode.Conflict)
                 {
-                    var error = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    var error = await response.Content.ReadFromJsonAsync<ErrorResponse>(cancellationToken: cancellationToken);
                     throw new MyBookShopApiException(error!);
-                } 
-                else if(response.StatusCode == HttpStatusCode.BadRequest)
+                }
+                else if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    var details = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+                    var details = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(cancellationToken: cancellationToken);
                     throw new MyBookShopApiException(response.StatusCode, details!);
                 }
                 else
@@ -104,8 +102,34 @@ namespace BlazorBookShop.Services
                     throw new MyBookShopApiException("Неизвестная ошибка");
                 }
             }
-            response.EnsureSuccessStatusCode();
 
+        }
+
+        public async Task<LoginResponse> Login(LoginRequest request, CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+            using var response = await _httpClient.PostAsJsonAsync("account/login", request, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+
+                if (response.StatusCode == HttpStatusCode.Conflict)
+                {
+                    var error = await response.Content.ReadFromJsonAsync<ErrorResponse>(cancellationToken:cancellationToken);
+                    throw new MyBookShopApiException(error!);
+                }
+                else if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var details = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(cancellationToken:cancellationToken);
+                    throw new MyBookShopApiException(response.StatusCode, details!);
+                }
+                else
+                {
+                    throw new MyBookShopApiException($"Неизвестная ошибка: {response.StatusCode}");
+                }
+            }
+            
+            var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>(cancellationToken:cancellationToken);
+            return loginResponse!;
         }
     }
 }

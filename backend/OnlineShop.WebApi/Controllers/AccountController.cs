@@ -23,23 +23,42 @@ namespace OnlineShop.WebApi.Controllers
             RegisterRequest request,
             CancellationToken cancellationToken)
         {
-            if(request is null) { throw new ArgumentNullException(nameof(request)); }
+            if (request is null) { throw new ArgumentNullException(nameof(request)); }
             try
             {
                 await _accountService.Register(request.Name, request.Email, request.Password, cancellationToken);
-                return Ok();
             }
-            catch(EmailAlreadyExistsException ex)
+            catch (EmailAlreadyExistsException)
             {
-                return Conflict(new ErrorResponse("Пользователь с таким Email'ом уже зарегистрирован."));
+                return Conflict(new ErrorResponse("Пользователь с таким Email уже зарегистрирован"));
             }
-            catch (Exception ex)
-            {
-                return BadRequest("Argument null exception caught:\n" + ex.Message);
-            }
-          
+
+            return Ok();
         }
 
 
+
+        [HttpPost("login")]
+        public async Task<ActionResult<LoginResponse>> Login(
+            LoginRequest request,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+              var account = await _accountService.Login(request.Email, request.Password, cancellationToken);
+                return new LoginResponse(account.Id, account.Name);
+
+            } catch(AccountNotFoundException)
+            {
+                return Conflict(new ErrorResponse("Аккаунт с таким Email не найден"));
+            }
+            catch(InvalidPasswordException)
+            {
+                return Conflict(new ErrorResponse("Неверный пароль"));
+            }
+            
+        }
+
     }
+
 }

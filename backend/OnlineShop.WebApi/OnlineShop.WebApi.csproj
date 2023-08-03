@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\IdentityPasswordHasherLib\OnlineShop.IdentityPasswordHasherLib.csproj" />
     <ProjectReference Include="..\OnlineShop.Data.EntityFramework\OnlineShop.Data.EntityFramework.csproj" />
     <ProjectReference Include="..\OnlineShop.Domain\OnlineShop.Domain.csproj" />
     <ProjectReference Include="..\..\shared\OnlineShop.HttpModals\OnlineShop.HttpModals.csproj" />

@@ -1,7 +1,9 @@
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OnlineShop.Domain.Interfaces;
 using OnlineShop.Domain.Services;
+using OnlineShop.IdentityPasswordHasherLib;
 using OnlineShop.WebApi.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +24,7 @@ builder.Services.AddDbContext<AppDbContext>(
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped<IAccountRepository, AccountRepositoryEf>();
 builder.Services.AddScoped<AccountService>();
+builder.Services.AddSingleton<IApplicationPasswordHasher, IdentityPasswordHasher>();
 
 builder.Services.AddHttpClient();
 

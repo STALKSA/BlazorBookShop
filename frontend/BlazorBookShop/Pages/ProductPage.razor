@@ -1,5 +1,6 @@
 ﻿@page "/products/{ProductId:guid}"
-@using BlazorBookShop.Interfaces;
+@    using BlazorBookShop.Interfaces;
+    using BookShop.HttpApiClient;
 @inject IBookShopClient ShopClient
 @inject NavigationManager NavigationManager
 @implements IDisposable

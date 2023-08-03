@@ -4,6 +4,7 @@ using BlazorBookShop;
 using MudBlazor.Services;
 using BlazorBookShop.Interfaces;
 using BlazorBookShop.Services;
+using BookShop.HttpApiClient;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
