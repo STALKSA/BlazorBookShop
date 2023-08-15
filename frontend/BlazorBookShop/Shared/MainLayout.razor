@@ -9,6 +9,13 @@
     <MudAppBar Elevation="0">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudSpacer />
+        <MudButton OnClick="() => maneger.NavigateTo(_loginPageName)"
+                   Variant="Variant.Filled"
+                   EndIcon="@Icons.Material.Filled.Login"
+                   Color="Color.Primary"
+        >
+           Вход
+        </MudButton>
         <MudButton OnClick="() => maneger.NavigateTo(_registrationPageName)"
                    Variant="Variant.Filled"
                    EndIcon="@Icons.Material.Filled.PersonAdd"
@@ -32,6 +39,7 @@
 
 @code {
     bool _drawerOpen = true;
+    private readonly string _loginPageName = "/login";
     private readonly string _registrationPageName = "/registration";
 
     void DrawerToggle()

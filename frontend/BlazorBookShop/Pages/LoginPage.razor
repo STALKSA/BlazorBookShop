@@ -1,0 +1,71 @@
+﻿@page "/login"
+@using OnlineShop.HttpModals.Requests;
+@using System.ComponentModel.DataAnnotations;
+@using BookShop.HttpApiClient.Exceptions;
+@using BookShop.HttpApiClient;
+@inject IBookShopClient ShopClient
+@inject NavigationManager maneger
+@inject IDialogService DialogService
+@inject ILogger<LoginPage> Logger
+@inject ISnackbar Snackbar
+
+<h3>Вход</h3>
+
+<EditForm Model="@model" OnValidSubmit="@ProcessLogin">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="Email" Class="mt-3"
+                                  @bind-Value="model.Email" For="@(() => model.Email)" />
+                    <MudTextField Label="Пароль" Class="mt-3"
+                                  @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password" />
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Войти</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        @if (_loginInProgress)
+        {
+            <MudItem xs="12" sm="5">
+
+                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+            </MudItem>
+        }
+    </MudGrid>
+</EditForm>
+
+@code {
+    readonly LoginRequest model = new();
+    private bool _loginInProgress;
+
+    private async Task ProcessLogin(EditContext context)
+    {
+        if (_loginInProgress)
+        {
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add("Пожалуйста, подождите...", Severity.Info);
+            return;
+        }
+        _loginInProgress = true;
+        Logger.LogInformation("Попытка входа");
+
+        try
+        {
+            await ShopClient.Login(model, default);
+            maneger.NavigateTo("/catalog");
+        }
+        catch (MyBookShopApiException ex)
+        {
+            _loginInProgress = false;
+            await DialogService.ShowMessageBox("Ошибка!", ex.Message, "OK");
+        }
+        finally
+        {
+            _loginInProgress = false;
+        }
+
+    }
+}
