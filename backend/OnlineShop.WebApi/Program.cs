@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OnlineShop.Domain.Interfaces;
@@ -8,16 +9,19 @@ using OnlineShop.WebApi.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var dbPath = "myapp.db";
+builder.Services.AddDbContext<AppDbContext>(
+   options => options.UseSqlite($"Data Source={dbPath}"));
 
+// Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var dbPath = "myapp.db";
-builder.Services.AddDbContext<AppDbContext>(
-   options => options.UseSqlite($"Data Source={dbPath}"));
+builder.Services.AddCors();
+
+builder.Services.AddHttpClient();
 
 
 //builder.Services.AddScoped<IProductRepository, ProductRepositoryEf>();
@@ -26,16 +30,38 @@ builder.Services.AddScoped<IAccountRepository, AccountRepositoryEf>();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddSingleton<IApplicationPasswordHasher, IdentityPasswordHasher>();
 
-builder.Services.AddHttpClient();
+builder.Services.AddHttpLogging(options => 
+{
+    options.LoggingFields = HttpLoggingFields.RequestHeaders
+                            | HttpLoggingFields.ResponseHeaders;
+});
 
-builder.Services.AddCors();
+
 
 var app = builder.Build();
+
+app.Use(async (context, next) =>
+{
+    var userAgent = context.Request.Headers.UserAgent;
+    if (userAgent.ToString().Contains("Edg"))
+    {
+        await next();
+    }
+    else
+    {
+        await context.Response.WriteAsync("Сайт поддерживается только на браузере Edge");
+    }
+
+});
+
+
+// app.UseHttpLogging();
 
 app.UseCors(policy =>
 {
 	policy
-		.AllowAnyMethod()
+        .WithOrigins("https://localhost:5001")
+        .AllowAnyMethod()
 		.AllowAnyHeader()
 		.AllowAnyOrigin();
 });
