@@ -6,6 +6,7 @@ using OnlineShop.Domain.Interfaces;
 using OnlineShop.Domain.Services;
 using OnlineShop.IdentityPasswordHasherLib;
 using OnlineShop.WebApi.Data.Repositories;
+using OnlineShop.WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped<IAccountRepository, AccountRepositoryEf>();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddSingleton<IApplicationPasswordHasher, IdentityPasswordHasher>();
+builder.Services.AddSingleton<ITransitionCounterService, TransitionCounterService>();
 
 builder.Services.AddHttpLogging(options => 
 {
@@ -39,6 +41,8 @@ builder.Services.AddHttpLogging(options =>
 
 
 var app = builder.Build();
+
+app.UseMiddleware<TransitionsCounterMiddleware>();
 
 app.Use(async (context, next) =>
 {
