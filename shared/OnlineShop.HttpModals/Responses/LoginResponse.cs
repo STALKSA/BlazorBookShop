@@ -1,5 +1,5 @@
 ﻿namespace OnlineShop.HttpModals.Responses
 {
-    public record LoginResponse(Guid Id, string Name);
+    public record LoginResponse(Guid Id, string Name, string Token);
 
 }

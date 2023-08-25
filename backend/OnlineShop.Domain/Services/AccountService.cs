@@ -21,7 +21,7 @@ namespace OnlineShop.Domain.Services
             _hasher = hasher ?? throw new ArgumentNullException(nameof(hasher));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-        public async Task Register(string name, string email, string password, CancellationToken cancellationToken)
+        public virtual async Task Register(string name, string email, string password, CancellationToken cancellationToken)
         {
 
             ArgumentNullException.ThrowIfNull(name);
@@ -40,7 +40,7 @@ namespace OnlineShop.Domain.Services
         }
    
 
-        public async Task<Account> Login(string email, string password, CancellationToken cancellationToken)
+        public virtual async Task<Account> Login(string email, string password, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(email);
             ArgumentNullException.ThrowIfNull(password);
@@ -76,6 +76,11 @@ namespace OnlineShop.Domain.Services
         {
             account.HashedPassword = EncryptPassword(password);
             return _accountRepository.Update(account, cancellationToken);
+        }
+
+        public async Task<Account> GetAccountById(Guid id, CancellationToken cancellationToken)
+        {
+            return await _accountRepository.GetById(id, cancellationToken);
         }
     }
 }

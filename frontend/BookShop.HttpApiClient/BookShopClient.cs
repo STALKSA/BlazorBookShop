@@ -1,11 +1,9 @@
 ﻿using BlazorBookShop.Models;
-using BookShop.HttpApiClient.Exceptions;
+using BookShop.HttpApiClient.Extentions;
 //using BookShop.HttpApiClient.Models;
 using OnlineShop.HttpModals.Requests;
 using OnlineShop.HttpModals.Responses;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace BookShop.HttpApiClient
@@ -80,56 +78,22 @@ namespace BookShop.HttpApiClient
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task Register(RegisterRequest request, CancellationToken cancellationToken)
+        public async Task<RegisterResponse> Register(RegisterRequest request, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(request);
-            using var response = await _httpClient.PostAsJsonAsync("account/register", request, cancellationToken);
-            if (!response.IsSuccessStatusCode)
-            {
-
-                if (response.StatusCode == HttpStatusCode.Conflict)
-                {
-                    var error = await response.Content.ReadFromJsonAsync<ErrorResponse>(cancellationToken: cancellationToken);
-                    throw new MyBookShopApiException(error!);
-                }
-                else if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    var details = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(cancellationToken: cancellationToken);
-                    throw new MyBookShopApiException(response.StatusCode, details!);
-                }
-                else
-                {
-                    throw new MyBookShopApiException("Неизвестная ошибка");
-                }
-            }
+            const string uri = "account/register";
+            return await _httpClient.PostAsJsonAnsDeserializeAsync<RegisterRequest, RegisterResponse>(request, uri, cancellationToken);
 
         }
 
         public async Task<LoginResponse> Login(LoginRequest request, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(request);
-            using var response = await _httpClient.PostAsJsonAsync("account/login", request, cancellationToken);
-            if (!response.IsSuccessStatusCode)
-            {
-
-                if (response.StatusCode == HttpStatusCode.Conflict)
-                {
-                    var error = await response.Content.ReadFromJsonAsync<ErrorResponse>(cancellationToken:cancellationToken);
-                    throw new MyBookShopApiException(error!);
-                }
-                else if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    var details = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(cancellationToken:cancellationToken);
-                    throw new MyBookShopApiException(response.StatusCode, details!);
-                }
-                else
-                {
-                    throw new MyBookShopApiException($"Неизвестная ошибка: {response.StatusCode}");
-                }
-            }
-            
-            var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>(cancellationToken:cancellationToken);
-            return loginResponse!;
+            const string uri = "account/login";
+            var response = await _httpClient.PostAsJsonAnsDeserializeAsync<LoginRequest, LoginResponse>(request, uri, cancellationToken);
+            var headerValue = new AuthenticationHeaderValue("Bearer", response.Token);
+            _httpClient.DefaultRequestHeaders.Authorization = headerValue;
+            return response;
         }
     }
 }

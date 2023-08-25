@@ -12,7 +12,7 @@ namespace BookShop.HttpApiClient
         Task<Product[]> GetProducts(CancellationToken cancellationToken);
         Task UpdateProduct(Guid id, Product product, CancellationToken cancellationToken);
         Task DeleteProduct(Product product, CancellationToken cancellationToken);
-        Task Register(RegisterRequest account, CancellationToken cancellationToken);
+        Task<RegisterResponse> Register(RegisterRequest account, CancellationToken cancellationToken);
         Task<LoginResponse> Login(LoginRequest account, CancellationToken cancellationToken);
     }
 }

@@ -1,14 +1,24 @@
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using OnlineShop.Domain.Interfaces;
 using OnlineShop.Domain.Services;
 using OnlineShop.IdentityPasswordHasherLib;
+using OnlineShop.WebApi.Configurations;
 using OnlineShop.WebApi.Data.Repositories;
 using OnlineShop.WebApi.Middleware;
+using OnlineShop.WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+JwtConfig jwtConfig = builder.Configuration
+    .GetRequiredSection("JwtConfig")
+    .Get<JwtConfig>()!;
+if (jwtConfig is null) throw new InvalidOperationException("JwtConfig не сконфигурирован!");
+builder.Services.AddSingleton(jwtConfig);
 
 var dbPath = "myapp.db";
 builder.Services.AddDbContext<AppDbContext>(
@@ -31,12 +41,38 @@ builder.Services.AddScoped<IAccountRepository, AccountRepositoryEf>();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddSingleton<IApplicationPasswordHasher, IdentityPasswordHasher>();
 builder.Services.AddSingleton<ITransitionCounterService, TransitionCounterService>();
+builder.Services.AddSingleton<ITokenService, TokenService>();
 
 builder.Services.AddHttpLogging(options => 
 {
     options.LoggingFields = HttpLoggingFields.RequestHeaders
                             | HttpLoggingFields.ResponseHeaders;
 });
+
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            IssuerSigningKey = new SymmetricSecurityKey(jwtConfig.SigningKeyBytes),
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            RequireExpirationTime = true,
+            RequireSignedTokens = true,
+
+            ValidateAudience = true,
+            ValidateIssuer = true,
+            ValidAudiences = new[] { jwtConfig.Audience },
+            ValidIssuer = jwtConfig.Issuer
+        };
+    });
+builder.Services.AddAuthorization();
 
 
 
@@ -79,6 +115,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
