@@ -8,6 +8,7 @@
 @inject IDialogService DialogService
 @inject ILogger<LoginPage> Logger
 @inject ISnackbar Snackbar
+@inherits AppComponentBase
 
 <h3>Вход</h3>
 
@@ -38,8 +39,8 @@
 </EditForm>
 
 @code {
-    readonly LoginRequest model = new();
-    private bool _loginInProgress;
+    private LoginRequest model = new();
+    private bool _loginInProgress = false;
 
     private async Task ProcessLogin(EditContext context)
     {

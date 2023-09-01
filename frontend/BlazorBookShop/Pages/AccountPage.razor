@@ -1,0 +1,46 @@
+﻿@page "/accounts/current"
+@inject IBookShopClient ShopClient
+@using BookShop.HttpApiClient.Exceptions;
+@using BookShop.HttpApiClient;
+
+
+<h3>Текущий активный аккаунт</h3>
+
+<EditForm Model="@_email">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="Имя" ReadOnly="true"
+                                  @bind-Value="@_name" />
+                    <MudTextField Label="Email" Class="mt-3" ReadOnly="true"
+                                  @bind-Value="@_email" />
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
+@code {
+    [Inject] private IDialogService DialogService { get; set; }
+    private string _name = "";
+    private string _email = "";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var resp = await ShopClient.GetCurrentAccount(default);
+            _name = resp.Name;
+            _email = resp.Email;
+        }
+        catch (MyBookShopApiException ex)
+        {
+            await DialogService.ShowMessageBox(
+                "Ошибка!",
+                $"Ошибка авторизации: {ex.Message}");
+        }
+    }
+}

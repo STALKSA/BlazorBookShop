@@ -3,6 +3,7 @@ using BookShop.HttpApiClient.Extentions;
 //using BookShop.HttpApiClient.Models;
 using OnlineShop.HttpModals.Requests;
 using OnlineShop.HttpModals.Responses;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
@@ -91,9 +92,30 @@ namespace BookShop.HttpApiClient
             ArgumentNullException.ThrowIfNull(request);
             const string uri = "account/login";
             var response = await _httpClient.PostAsJsonAnsDeserializeAsync<LoginRequest, LoginResponse>(request, uri, cancellationToken);
-            var headerValue = new AuthenticationHeaderValue("Bearer", response.Token);
-            _httpClient.DefaultRequestHeaders.Authorization = headerValue;
+            SetAuthorizationToken(response.Token);
             return response;
         }
+
+        public void SetAuthorizationToken(string token)
+        {
+            if (token == null) throw new ArgumentNullException(nameof(token));
+            var header = new AuthenticationHeaderValue("Bearer", token);
+            _httpClient.DefaultRequestHeaders.Authorization = header;
+            IsAuthorizationTokenSet = true;
+        }
+        public bool IsAuthorizationTokenSet { get; private set; }
+
+        public async Task<AccountResponse> GetCurrentAccount(CancellationToken cancellationToken)
+        {
+            var accountResponse = await _httpClient
+                .GetFromJsonAsync<AccountResponse>($"account/current", cancellationToken);
+            if (accountResponse is null)
+            {
+                throw new InvalidOperationException("The server returned null");
+            }
+            return accountResponse;
+        }
+
     }
+
 }

@@ -14,5 +14,6 @@ namespace BookShop.HttpApiClient
         Task DeleteProduct(Product product, CancellationToken cancellationToken);
         Task<RegisterResponse> Register(RegisterRequest account, CancellationToken cancellationToken);
         Task<LoginResponse> Login(LoginRequest account, CancellationToken cancellationToken);
+        Task<AccountResponse> GetCurrentAccount(CancellationToken cancellationToken);
     }
 }
