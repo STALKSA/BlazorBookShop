@@ -15,5 +15,8 @@ namespace BookShop.HttpApiClient
         Task<RegisterResponse> Register(RegisterRequest account, CancellationToken cancellationToken);
         Task<LoginResponse> Login(LoginRequest account, CancellationToken cancellationToken);
         Task<AccountResponse> GetCurrentAccount(CancellationToken cancellationToken);
+        void SetAuthorizationToken(string token);
+        Task AddCartItemToCart(AddCartItemRequest request, CancellationToken cancellationToken);
+        Task<CartResponse> GetCart(CancellationToken cancellationToken);
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OnlineShop.Data.EntityFramework.Repositories;
 using OnlineShop.Domain.Interfaces;
 using OnlineShop.Domain.Services;
 using OnlineShop.IdentityPasswordHasherLib;
@@ -38,10 +39,13 @@ builder.Services.AddHttpClient();
 //builder.Services.AddScoped<IProductRepository, ProductRepositoryEf>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped<IAccountRepository, AccountRepositoryEf>();
+builder.Services.AddScoped<ICartRepository, CartRepositoryEf>();
 builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<CartService>();
 builder.Services.AddSingleton<IApplicationPasswordHasher, IdentityPasswordHasher>();
 builder.Services.AddSingleton<ITransitionCounterService, TransitionCounterService>();
 builder.Services.AddSingleton<ITokenService, TokenService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWorkEf>();
 
 builder.Services.AddHttpLogging(options => 
 {

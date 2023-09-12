@@ -116,6 +116,23 @@ namespace BookShop.HttpApiClient
             return accountResponse;
         }
 
+        public async Task AddCartItemToCart(AddCartItemRequest request, CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+            using var response = await _httpClient.PostAsJsonAsync("cart/add", request, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task<CartResponse> GetCart(CancellationToken cancellationToken)
+        {
+            var cartItems = await _httpClient
+                .GetFromJsonAsync<CartResponse>($"cart", cancellationToken);
+            if (cartItems is null)
+            {
+                throw new InvalidOperationException("Сервер вернул null");
+            }
+            return cartItems;
+        }
     }
 
 }

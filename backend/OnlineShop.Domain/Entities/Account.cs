@@ -42,11 +42,7 @@ namespace OnlineShop.Domain.Entities
               
         }
 
-        public Guid Id
-        {
-            get => _id;
-            set => _id = value;
-        }
+        public Guid Id { get; init; }
 
         public string? Name 
         {

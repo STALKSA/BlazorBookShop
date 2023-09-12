@@ -8,7 +8,8 @@
 @inject IDialogService DialogService
 @inject ILogger<LoginPage> Logger
 @inject ISnackbar Snackbar
-@inherits AppComponentBase
+
+
 
 <h3>Вход</h3>
 
@@ -56,7 +57,7 @@
         try
         {
             await ShopClient.Login(model, default);
-            maneger.NavigateTo("/catalog");
+            maneger.NavigateTo("/account");
         }
         catch (MyBookShopApiException ex)
         {

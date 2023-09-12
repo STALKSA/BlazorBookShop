@@ -1,10 +1,9 @@
-﻿@page "/accounts/current"
+﻿@page "/account"
 @inject IBookShopClient ShopClient
 @using BookShop.HttpApiClient.Exceptions;
 @using BookShop.HttpApiClient;
 
 
-<h3>Текущий активный аккаунт</h3>
 
 <EditForm Model="@_email">
     <DataAnnotationsValidator />
@@ -42,5 +41,6 @@
                 "Ошибка!",
                 $"Ошибка авторизации: {ex.Message}");
         }
+      
     }
 }
