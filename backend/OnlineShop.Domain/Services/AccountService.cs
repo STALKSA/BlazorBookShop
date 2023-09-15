@@ -9,7 +9,7 @@ namespace OnlineShop.Domain.Services
     public class AccountService
 
     {
-        private readonly IAccountRepository _accountRepository;
+        
         private readonly IApplicationPasswordHasher _hasher;
         private readonly IUnitOfWork _uow;
         private readonly ILogger<AccountService> _logger;
@@ -19,7 +19,7 @@ namespace OnlineShop.Domain.Services
             IUnitOfWork uow,
             ILogger<AccountService> logger)
         {  
-            _accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
+            
             _hasher = hasher ?? throw new ArgumentNullException(nameof(hasher));
             _uow = uow ?? throw new ArgumentNullException(nameof(uow));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -37,7 +37,7 @@ namespace OnlineShop.Domain.Services
                 throw new EmailAlreadyExistsException("Аккаунт с данным Email уже существует");
                
             }
-            var account = new Account(name, email, EncryptPassword(password));
+            var account = new Account(Guid.NewGuid(), name, email, EncryptPassword(password));
             Cart cart = new(Guid.NewGuid(), account.Id);
             await _uow.AccountRepository.Add(account, cancellationToken);
             await _uow.CartRepository.Add(cart, cancellationToken);
@@ -46,29 +46,79 @@ namespace OnlineShop.Domain.Services
         }
    
 
-        public virtual async Task<Account> Login(string email, string password, CancellationToken cancellationToken)
+        public virtual async Task<(Account account, Guid codeId)> Login(string email, string password, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(email);
             ArgumentNullException.ThrowIfNull(password);
 
+            var account = await LoginByPassword(email, password, cancellationToken);
+
+            var code = await CreateAndSendConfirmationCode(account, cancellationToken);
+
+            return (account, code.Id);
+
+        }
+
+        public virtual async Task<Account> LoginByPassword(string email, string password, CancellationToken cancellationToken)
+        {
+            if (email == null) throw new ArgumentNullException(nameof(email));
+            if (password == null) throw new ArgumentNullException(nameof(password));
+
             var account = await _uow.AccountRepository.FindAccountByEmail(email, cancellationToken);
-            if (account is not null)
+            if (account is null)
             {
-                throw new AccountNotFoundException("Аккаунт с данным Email не найден");
+                throw new AccountNotFoundException("Аккаунт не найден");
             }
 
             var isPasswordValid = _hasher.VerifyHashedPassword(account.HashedPassword, password, out var rehashNeeded);
-            if(!isPasswordValid)
+            if (!isPasswordValid)
             {
                 throw new InvalidPasswordException("Не валидный пароль");
             }
-            if(rehashNeeded)
+
+            if (rehashNeeded)
             {
                 await RehashPassword(password, account, cancellationToken);
             }
 
             return account;
+        }
 
+        public async Task<Account> LoginByCode(string email, Guid codeId, string code, CancellationToken cancellationToken)
+        {
+
+            var codeObject = await _uow.ConfirmationCodeRepository.GetById(codeId, cancellationToken);
+            if (codeObject is null)
+                throw new CodeNotFoundException("There is no Code for this CodeId");
+            if (codeObject.Code != code)
+                throw new InvalidCodeException("Code not confirmed!");
+            var account = await _uow.AccountRepository.FindAccountByEmail(email, cancellationToken);
+            if (account is null)
+                throw new AccountNotFoundException("Account not found");
+            return account;
+        }
+
+        private async Task<ConfirmationCode> CreateAndSendConfirmationCode(Account account, CancellationToken cancellationToken)
+        {
+            if (account == null) throw new ArgumentNullException(nameof(account));
+            if (account.Email == null) throw new ArgumentNullException(nameof(account));
+            var code = GeneraNewConfirmationCode(account);
+            await _uow.ConfirmationCodeRepository.Add(code, cancellationToken);
+
+            _logger.LogInformation($"Email sent from with password: {code.Code}");
+            // await _emailSender.SendEmailAsync(
+            //     account.Email,
+            //     "Подтверждение входа",
+            //     code.Code, cancellationToken);
+
+            await _uow.SaveChangesAsync(cancellationToken);
+            return code;
+        }
+
+        private ConfirmationCode GeneraNewConfirmationCode(Account account)
+        {
+            return new ConfirmationCode(Guid.NewGuid(), account.Id, DateTimeOffset.Now,
+                DateTimeOffset.Now);
         }
 
         private string EncryptPassword(string password)

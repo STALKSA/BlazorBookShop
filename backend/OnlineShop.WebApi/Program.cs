@@ -36,6 +36,8 @@ builder.Services.AddCors();
 builder.Services.AddHttpClient();
 
 
+
+
 //builder.Services.AddScoped<IProductRepository, ProductRepositoryEf>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped<IAccountRepository, AccountRepositoryEf>();
@@ -45,6 +47,7 @@ builder.Services.AddScoped<CartService>();
 builder.Services.AddSingleton<IApplicationPasswordHasher, IdentityPasswordHasher>();
 builder.Services.AddSingleton<ITransitionCounterService, TransitionCounterService>();
 builder.Services.AddSingleton<ITokenService, TokenService>();
+builder.Services.AddScoped<IConfirmationCodeRepository, ConfirmationCodeRepositoryEf>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWorkEf>();
 
 builder.Services.AddHttpLogging(options => 

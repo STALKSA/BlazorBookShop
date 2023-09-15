@@ -4,7 +4,7 @@ namespace OnlineShop.Domain.Entities
 {
     public class Account : IEntity
     {
-        private Guid _id;
+        
         private string? _name;
         private string? _email;
         private string? _hashedPassword;
@@ -13,7 +13,7 @@ namespace OnlineShop.Domain.Entities
         {
         }
 
-        public Account(string name, string email, string hashedPassword)
+        public Account(Guid id, string name, string email, string hashedPassword)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -35,7 +35,7 @@ namespace OnlineShop.Domain.Entities
                 throw new ArgumentException("Значение не валидно",nameof(email));
             }
 
-            Id = Guid.NewGuid();
+            Id = id;
             _name = name;
             _email = email;
             _hashedPassword = hashedPassword;

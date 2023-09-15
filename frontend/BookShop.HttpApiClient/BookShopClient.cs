@@ -79,19 +79,23 @@ namespace BookShop.HttpApiClient
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<RegisterResponse> Register(RegisterRequest request, CancellationToken cancellationToken)
+        public async Task<LoginByCodeResponse> Register(RegisterRequest account, CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(account);
+
             const string uri = "account/register";
-            return await _httpClient.PostAsJsonAnsDeserializeAsync<RegisterRequest, RegisterResponse>(request, uri, cancellationToken);
+
+            var response = await _httpClient.PostAsJsonAnsDeserializeAsync<RegisterRequest, LoginByCodeResponse>(account, uri, cancellationToken);
+            SetAuthorizationToken(response.Token);
+            return response;
 
         }
 
-        public async Task<LoginResponse> Login(LoginRequest request, CancellationToken cancellationToken)
+        public async Task<LoginByCodeResponse> Login(LoginByPassRequest request, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(request);
             const string uri = "account/login";
-            var response = await _httpClient.PostAsJsonAnsDeserializeAsync<LoginRequest, LoginResponse>(request, uri, cancellationToken);
+            var response = await _httpClient.PostAsJsonAnsDeserializeAsync<LoginByPassRequest, LoginByCodeResponse>(request, uri, cancellationToken);
             SetAuthorizationToken(response.Token);
             return response;
         }
