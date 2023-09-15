@@ -28,23 +28,7 @@ namespace BlazorBookShop.Pages
                 //State.IsTokenChecked = false;
             }
         }
-        //protected override async Task OnInitializedAsync()
-        //{
-        //    await base.OnInitializedAsync();
-        //    if (ShopClient.IsAuthorizationTokenSet) return;
-
-        //    var token = await LocalStorage.GetItemAsync<string>("token");
-
-        //    if (!string.IsNullOrEmpty(token))
-        //    {
-        //        ShopClient.SetAuthorizationToken(token);
-        //    }
-        //}
-
-        //protected async Task ClearToken()
-        //{
-        //    await LocalStorage.RemoveItemAsync("token");
-        //}
+      
 
     }
 }

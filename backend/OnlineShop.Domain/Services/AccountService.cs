@@ -11,14 +11,17 @@ namespace OnlineShop.Domain.Services
     {
         private readonly IAccountRepository _accountRepository;
         private readonly IApplicationPasswordHasher _hasher;
+        private readonly IUnitOfWork _uow;
         private readonly ILogger<AccountService> _logger;
 
         public AccountService(IAccountRepository accountRepository, 
             IApplicationPasswordHasher hasher,
+            IUnitOfWork uow,
             ILogger<AccountService> logger)
         {  
             _accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
             _hasher = hasher ?? throw new ArgumentNullException(nameof(hasher));
+            _uow = uow ?? throw new ArgumentNullException(nameof(uow));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         public virtual async Task Register(string name, string email, string password, CancellationToken cancellationToken)
@@ -28,14 +31,17 @@ namespace OnlineShop.Domain.Services
             ArgumentNullException.ThrowIfNull(email);
             ArgumentNullException.ThrowIfNull(password);
 
-            var existedAccount = await _accountRepository.FindAccountByEmail(email, cancellationToken);
+            var existedAccount = await _uow.AccountRepository.FindAccountByEmail(email, cancellationToken);
             if (existedAccount is not null)
             {
                 throw new EmailAlreadyExistsException("Аккаунт с данным Email уже существует");
                
             }
             var account = new Account(name, email, EncryptPassword(password));
-            await _accountRepository.Add(account, cancellationToken);
+            Cart cart = new(Guid.NewGuid(), account.Id);
+            await _uow.AccountRepository.Add(account, cancellationToken);
+            await _uow.CartRepository.Add(cart, cancellationToken);
+            await _uow.SaveChangesAsync(cancellationToken);
 
         }
    
@@ -45,7 +51,7 @@ namespace OnlineShop.Domain.Services
             ArgumentNullException.ThrowIfNull(email);
             ArgumentNullException.ThrowIfNull(password);
 
-            var account = await _accountRepository.FindAccountByEmail(email, cancellationToken);
+            var account = await _uow.AccountRepository.FindAccountByEmail(email, cancellationToken);
             if (account is not null)
             {
                 throw new AccountNotFoundException("Аккаунт с данным Email не найден");
@@ -69,18 +75,19 @@ namespace OnlineShop.Domain.Services
         {
             var hashedPassword = _hasher.HashPassword(password);
             _logger.LogDebug($"Password hashed: {hashedPassword}", hashedPassword);
-            return password;
+            return hashedPassword;
         }
 
-        private Task RehashPassword(string password, Account? account, CancellationToken cancellationToken)
+        private async Task RehashPassword(string password, Account? account, CancellationToken cancellationToken)
         {
             account.HashedPassword = EncryptPassword(password);
-            return _accountRepository.Update(account, cancellationToken);
+            await _uow.AccountRepository.Update(account, cancellationToken);
+            await _uow.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<Account> GetAccountById(Guid id, CancellationToken cancellationToken)
         {
-            return await _accountRepository.GetById(id, cancellationToken);
+            return await _uow.AccountRepository.GetById(id, cancellationToken);
         }
     }
 }

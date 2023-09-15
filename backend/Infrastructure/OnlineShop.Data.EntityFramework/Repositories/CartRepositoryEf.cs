@@ -14,15 +14,12 @@ namespace OnlineShop.Data.EntityFramework.Repositories
 
         public async Task<Cart> GetCartByAccountId(Guid id, CancellationToken cancellationToken)
         {
-            var ent = await Entities.FirstOrDefaultAsync(it => it.AccountId == id, cancellationToken);
-            if (ent is null)
+            var cart = await Entities.Include(it => it.Items).SingleOrDefaultAsync(it => it.AccountId == id, cancellationToken);
+            if (cart is null)
             {
                 throw new AccountNotFoundException("Аккаунт не найден");
             }
-            var cart = await Entities
-                .Include(it => it.Items)
-                .Where(it => it.AccountId == id)
-                .FirstAsync(cancellationToken);
+          
             return cart;
         }
     }

@@ -5,35 +5,26 @@ namespace OnlineShop.Domain.Services
 {
     public class CartService
     {
-        private readonly ICartRepository _cartRepository;
- 
+        private readonly IUnitOfWork _uow;
 
-        public CartService(ICartRepository cartRepository)
+
+        public CartService(IUnitOfWork uow)
         {
-            _cartRepository = cartRepository ?? throw new ArgumentNullException(nameof(cartRepository));
+            _uow = uow ?? throw new ArgumentNullException(nameof(uow));
 
         }
 
         public virtual async Task AddProduct(Guid accountId, Guid productId, int quantity, CancellationToken cancellationToken)
         {
-            var cart = await _cartRepository.GetCartByAccountId(accountId, cancellationToken);
-
-            var existedItem = cart.Items!.FirstOrDefault(item => item.ProductId == productId);
-            if (existedItem is null)
-            {
-                cart.Items!.Add(new CartItem(Guid.Empty, productId, quantity));
-            }
-            else
-            {
-                existedItem.Quantity += quantity;
-            }
-
-            await _cartRepository.Update(cart, cancellationToken);
+            var cart = await _uow.CartRepository.GetCartByAccountId(accountId, cancellationToken);
+            cart.AddItem(productId, quantity);
+            await _uow.CartRepository.Update(cart, cancellationToken);
+            await _uow.SaveChangesAsync(cancellationToken);
         }
 
         public virtual Task<Cart> GetAccountCart(Guid accountId, CancellationToken cancellationToken)
         {
-            return _cartRepository.GetCartByAccountId(accountId, cancellationToken);
+            return _uow.CartRepository.GetCartByAccountId(accountId, cancellationToken);
         }
     }
 }
