@@ -8,6 +8,7 @@ public class AppDbContext : DbContext
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<Cart> Carts => Set<Cart>();
     public DbSet<CartItem> CartsItems => Set<CartItem>();
+    public DbSet<ConfirmationCode> ConfirmationCodes => Set<ConfirmationCode>();
 
     public AppDbContext(
 		DbContextOptions<AppDbContext> options)
@@ -15,6 +16,11 @@ public class AppDbContext : DbContext
 	{
 	}
 
-  
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+    }
+
+
 }
 

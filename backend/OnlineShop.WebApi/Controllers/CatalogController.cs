@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Domain.Entities;
 using OnlineShop.Domain.Interfaces;
+using OnlineShop.WebApi.Filters;
 
 namespace OnlineShop.WebApi.Controllers
 {
+    [GlobalExceptionFilter]
     [ApiController]
 	public class CatalogController : Controller
 	{

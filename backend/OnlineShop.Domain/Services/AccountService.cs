@@ -3,6 +3,8 @@ using OnlineShop.Domain.Entities;
 using OnlineShop.Domain.Interfaces;
 using System.Reflection.Metadata;
 using Microsoft.Extensions.Logging;
+using MediatR;
+using OnlineShop.Domain.Events;
 
 namespace OnlineShop.Domain.Services
 {
@@ -13,16 +15,19 @@ namespace OnlineShop.Domain.Services
         private readonly IApplicationPasswordHasher _hasher;
         private readonly IUnitOfWork _uow;
         private readonly ILogger<AccountService> _logger;
+        private readonly IMediator _mediator;
 
-        public AccountService(IAccountRepository accountRepository, 
+        public AccountService(
             IApplicationPasswordHasher hasher,
             IUnitOfWork uow,
-            ILogger<AccountService> logger)
+            ILogger<AccountService> logger
+          /*  IMediator mediator*/)
         {  
             
             _hasher = hasher ?? throw new ArgumentNullException(nameof(hasher));
             _uow = uow ?? throw new ArgumentNullException(nameof(uow));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            //_mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
         public virtual async Task Register(string name, string email, string password, CancellationToken cancellationToken)
         {
@@ -42,6 +47,7 @@ namespace OnlineShop.Domain.Services
             await _uow.AccountRepository.Add(account, cancellationToken);
             await _uow.CartRepository.Add(cart, cancellationToken);
             await _uow.SaveChangesAsync(cancellationToken);
+            //await _mediator.Publish(new AccountRegistered(account, DateTime.UtcNow), cancellationToken);
 
         }
    
@@ -89,12 +95,12 @@ namespace OnlineShop.Domain.Services
 
             var codeObject = await _uow.ConfirmationCodeRepository.GetById(codeId, cancellationToken);
             if (codeObject is null)
-                throw new CodeNotFoundException("There is no Code for this CodeId");
+                throw new CodeNotFoundException("Для кода нет CodeId");
             if (codeObject.Code != code)
-                throw new InvalidCodeException("Code not confirmed!");
+                throw new InvalidCodeException("Код не подтвержден!");
             var account = await _uow.AccountRepository.FindAccountByEmail(email, cancellationToken);
             if (account is null)
-                throw new AccountNotFoundException("Account not found");
+                throw new AccountNotFoundException("Аккаунт не найден");
             return account;
         }
 
@@ -104,14 +110,8 @@ namespace OnlineShop.Domain.Services
             if (account.Email == null) throw new ArgumentNullException(nameof(account));
             var code = GeneraNewConfirmationCode(account);
             await _uow.ConfirmationCodeRepository.Add(code, cancellationToken);
-
-            _logger.LogInformation($"Email sent from with password: {code.Code}");
-            // await _emailSender.SendEmailAsync(
-            //     account.Email,
-            //     "Подтверждение входа",
-            //     code.Code, cancellationToken);
-
             await _uow.SaveChangesAsync(cancellationToken);
+            //await _mediator.Publish(new LoginCodeCreated(account, code), cancellationToken);
             return code;
         }
 

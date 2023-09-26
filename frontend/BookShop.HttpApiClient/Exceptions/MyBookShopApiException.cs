@@ -7,13 +7,13 @@ namespace BookShop.HttpApiClient.Exceptions
     {
         public ErrorResponse? Error { get; }
         public ValidationProblemDetails? Details { get; }
-        public HttpStatusCode? StatusCode { get; }
+        public int? StatusCode { get; }
 
         public MyBookShopApiException()
         {
         }
 
-        public MyBookShopApiException(HttpStatusCode statusCode, ValidationProblemDetails details) : base(details.Title)
+        public MyBookShopApiException(int statusCode, ValidationProblemDetails details) : base(details.Title)
         {
             StatusCode = statusCode;
             Details = details;
@@ -25,7 +25,7 @@ namespace BookShop.HttpApiClient.Exceptions
             StatusCode = error.StatusCode;
         }
 
-        public MyBookShopApiException(HttpStatusCode statusCode, string message)
+        public MyBookShopApiException(int statusCode, string message)
         {
             StatusCode = statusCode;
         }

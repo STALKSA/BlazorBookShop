@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OnlineShop.Data.EntityFramework.Repositories;
+using OnlineShop.Domain.Events;
 using OnlineShop.Domain.Interfaces;
 using OnlineShop.Domain.Services;
 using OnlineShop.IdentityPasswordHasherLib;
 using OnlineShop.WebApi.Configurations;
 using OnlineShop.WebApi.Data.Repositories;
+using OnlineShop.WebApi.Filters;
 using OnlineShop.WebApi.Middleware;
 using OnlineShop.WebApi.Services;
 
@@ -26,7 +28,11 @@ builder.Services.AddDbContext<AppDbContext>(
    options => options.UseSqlite($"Data Source={dbPath}"));
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<GlobalExceptionFilter>(order: 1);
+    options.Filters.Add<AuthentificationFilter>(order: 0);
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -49,6 +55,12 @@ builder.Services.AddSingleton<ITransitionCounterService, TransitionCounterServic
 builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddScoped<IConfirmationCodeRepository, ConfirmationCodeRepositoryEf>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWorkEf>();
+
+//builder.Services.AddMediatR(cfg =>
+//{
+//    cfg.RegisterServicesFromAssemblies(typeof(AccountRegistered).Assembly);
+//    cfg.RegisterServicesFromAssemblies(typeof(LoginCodeCreated).Assembly);
+//});
 
 builder.Services.AddHttpLogging(options => 
 {

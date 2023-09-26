@@ -27,7 +27,7 @@ namespace BookShop.HttpApiClient.Extentions
                     case HttpStatusCode.BadRequest:
                         {
                             var details = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(cancellationToken: cancellationToken);
-                            throw new MyBookShopApiException(response.StatusCode, details!);
+                            throw new MyBookShopApiException((int)response.StatusCode, details!);
                         }
                     default:
                         throw new MyBookShopApiException($"Неизвестная ошибка {response.StatusCode}");

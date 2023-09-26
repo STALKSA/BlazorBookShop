@@ -7,10 +7,12 @@ using OnlineShop.Domain.Interfaces;
 using OnlineShop.Domain.Services;
 using OnlineShop.HttpModals.Requests;
 using OnlineShop.HttpModals.Responses;
+using OnlineShop.WebApi.Filters;
 using System.Security.Claims;
 
 namespace OnlineShop.WebApi.Controllers
 {
+    [GlobalExceptionFilter]
     [Route("cart")]
     [ApiController]
     public class CartController : ControllerBase

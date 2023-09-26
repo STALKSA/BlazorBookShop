@@ -4,11 +4,13 @@ using OnlineShop.Domain.Exceptions;
 using OnlineShop.Domain.Services;
 using OnlineShop.HttpModals.Requests;
 using OnlineShop.HttpModals.Responses;
+using OnlineShop.WebApi.Filters;
 using OnlineShop.WebApi.Services;
 using System.Security.Claims;
 
 namespace OnlineShop.WebApi.Controllers
 {
+    [GlobalExceptionFilter]
     [Route("account")]
     [ApiController]
     public class AccountController : ControllerBase
