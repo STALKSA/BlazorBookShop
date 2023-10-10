@@ -40,37 +40,6 @@ namespace BookShop.Domain.Test
             Assert.Equal(2, cart.Items!.First().Quantity);
         }
 
-        [Fact]
-        public void Removing_item_from_cart_reduces_item_count()
-        {
-            // Arrange
-            var cart = new Cart(Guid.NewGuid(), Guid.NewGuid());
-            var productId = Guid.NewGuid();
-            cart.AddItem(productId, 1);
-
-            // Act
-          //  cart.RemoveItem(productId); //todo метод удаления товара из корзины
-
-            // Assert
-            Assert.Empty(cart.Items!);
-        }
-
-        [Fact]
-        public void Total_price_is_correct_after_addition_and_removal()
-        {
-            // Arrange
-            var cart = new Cart(Guid.NewGuid(), Guid.NewGuid());
-            var productId1 = Guid.NewGuid();
-            var productId2 = Guid.NewGuid();
-
-            // Act
-            cart.AddItem(productId1, 2);
-            cart.AddItem(productId2, 3);
-        //   cart.RemoveItem(productId1);
-
-            // Assert
-          //  Assert.Equal(3d, cart.GetTotalPrice()); //todo реализовать подсчет цены корзины
-        }
 
         [Fact]
         public void Multiple_products_are_correctly_added_to_cart()

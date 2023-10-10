@@ -9,7 +9,7 @@ namespace OnlineShop.Domain.Entities
         private string? _email;
         private string? _hashedPassword;
 
-        public Account()
+        protected Account()
         {
         }
 
